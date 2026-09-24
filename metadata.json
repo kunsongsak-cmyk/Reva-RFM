@@ -1,6 +1,6 @@
 {
-  "name": "Reva Aesthetic CRM",
-  "description": "ระบบ CRM ติดตามคนไข้และวิเคราะห์ RFM ของ Reva Aesthetic Clinic Bangkok",
+  "name": "Reva Clinic CRM",
+  "description": "ระบบ CRM ติดตามคนไข้และวิเคราะห์ RFM ของ Reva Clinic Bangkok",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

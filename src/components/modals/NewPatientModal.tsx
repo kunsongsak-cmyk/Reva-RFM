@@ -80,7 +80,7 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
                 ลงทะเบียนคนไข้ใหม่
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                Reva Aesthetic Clinic • เคาน์เตอร์ต้อนรับ
+                Reva Clinic • เคาน์เตอร์ต้อนรับ
               </p>
             </div>
           </div>

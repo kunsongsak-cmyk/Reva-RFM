@@ -33,10 +33,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <div className="flex flex-col">
             <span className="font-display font-semibold text-[18px] tracking-tight text-[#0b1c30] leading-none">
-              Reva Aesthetic
+              Reva Clinic
             </span>
             <span className="font-sans text-[11px] font-medium uppercase tracking-widest text-[#45464d] mt-0.5">
-              Clinic · Bangkok
+              Bangkok · CRM
             </span>
           </div>
         </div>

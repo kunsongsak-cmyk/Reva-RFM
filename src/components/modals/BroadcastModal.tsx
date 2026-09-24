@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 const TEMPLATES: Record<string, string> = {
-  'oligio-recall': 'สวัสดีค่ะ คุณ[CustomerName] ถึงรอบยกกระชับประจำปีแล้วค่ะ ทีมแพทย์ Reva Aesthetic Clinic เตรียมสิทธิพิเศษไว้ให้ จองภายใน 30 ก.ย. รับ Exosome Skin Infusion ฟรีค่ะ',
+  'oligio-recall': 'สวัสดีค่ะ คุณ[CustomerName] ถึงรอบยกกระชับประจำปีแล้วค่ะ ทีมแพทย์ Reva Clinic เตรียมสิทธิพิเศษไว้ให้ จองภายใน 30 ก.ย. รับ Exosome Skin Infusion ฟรีค่ะ',
   'botox': 'สวัสดีค่ะ คุณ[CustomerName] ใกล้ถึงรอบ Botox แล้วค่ะ จองคิวกับคุณหมอภายในสัปดาห์นี้ เพื่อให้กรอบหน้าคมชัดต่อเนื่องนะคะ',
-  'vip-anniversary': 'สวัสดีค่ะ คุณ[CustomerName] ขอบคุณที่ไว้วางใจ Reva Aesthetic Clinic มาตลอดค่ะ เดือนนี้เรามีสิทธิพิเศษสำหรับลูกค้า VIP โดยเฉพาะ สนใจสอบถามได้เลยค่ะ'
+  'vip-anniversary': 'สวัสดีค่ะ คุณ[CustomerName] ขอบคุณที่ไว้วางใจ Reva Clinic มาตลอดค่ะ เดือนนี้เรามีสิทธิพิเศษสำหรับลูกค้า VIP โดยเฉพาะ สนใจสอบถามได้เลยค่ะ'
 };
 
 interface BroadcastModalProps {
