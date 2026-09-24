@@ -23,6 +23,8 @@ export interface TreatmentHistoryItem {
   id: string;
   name: string;
   category: TreatmentCategory;
+  // Clinic course code, e.g. "C-RED1" (present on imported data)
+  code?: string;
   date: string;
   price: number;
   doctor: string;

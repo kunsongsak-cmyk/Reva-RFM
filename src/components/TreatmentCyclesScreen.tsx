@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Patient, ScreenType, CycleCategory } from '../types';
 import { CYCLE_INTERVAL_DAYS, formatBaht } from '../lib/rfm';
+import { COURSE_INTERVAL_OVERRIDES, inferCategory } from '../lib/courseCategories';
 
 interface TreatmentCyclesScreenProps {
   patients: Patient[];
@@ -103,6 +104,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
                 </h3>
                 <span className="text-[12px] font-semibold text-[#006a61]">
                   ผลการรักษาคงอยู่: {m.halfLifeMonths} • ระบบนัดทุก {CYCLE_INTERVAL_DAYS[m.category]} วัน
+                  {COURSE_INTERVAL_OVERRIDES.filter(o => inferCategory(o.prefix, '') === m.category).map(o => ` • ${o.label} ทุก ${o.days} วัน`).join('')}
                 </span>
               </div>
               <span className="px-2.5 py-1 rounded bg-[#eff4ff] text-[#0b1c30] text-[11px] font-bold shrink-0">

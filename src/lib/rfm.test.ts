@@ -105,6 +105,20 @@ test('cycles: overdue, due soon, and lapsed', () => {
   assert.equal(cycles[cycles.length - 1].category, 'Lifting', 'lapsed cycles sort last');
 });
 
+test('course-code interval override: Red Touch Pro recalls at 30 days', () => {
+  const today = new Date(Date.UTC(2026, 8, 24));
+  const redTouch = { ...treatment('20 Aug 2026', 8900, 'Skin'), code: 'C-RED1', name: 'Red Touch Pro' }; // 35 days ago
+  const [red] = computeCycles([redTouch], today);
+  assert.equal(red.dueInDays, -5);
+  assert.equal(red.isOverdue, true);
+  // Without a code, the name still triggers the override
+  const [byName] = computeCycles([{ ...redTouch, code: undefined }], today);
+  assert.equal(byName.dueInDays, -5);
+  // Other skin boosters keep the 45-day default
+  const [rejuran] = computeCycles([{ ...treatment('20 Aug 2026', 14900, 'Skin'), name: 'Rejuran Healer' }], today);
+  assert.equal(rejuran.dueInDays, 10);
+});
+
 test('enrichPatient derives value, RFM and segment from treatments', () => {
   const p = enrichPatient(
     record([

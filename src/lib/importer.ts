@@ -256,6 +256,7 @@ export function buildRecords(rows: Cell[][], headerRow: number, mapping: ColumnM
       id: `imp-${key}-${rowNo}`,
       name: item,
       category,
+      code: code || undefined,
       date,
       price: amount,
       doctor: doctor || '-',

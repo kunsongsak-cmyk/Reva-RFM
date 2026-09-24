@@ -64,6 +64,19 @@ export const NAME_KEYWORDS: [keyword: string, category: TreatmentCategory][] = [
   ['yellow', 'Laser']
 ];
 
+// Recall intervals that differ from their category default (CYCLE_INTERVAL_DAYS).
+// Matched by course-code prefix, or by keyword in the name when there is no code.
+export const COURSE_INTERVAL_OVERRIDES: { prefix: string; keyword: string; label: string; days: number }[] = [
+  { prefix: 'C-RED', keyword: 'red touch', label: 'Red Touch Pro', days: 30 }
+];
+
+export function intervalOverride(code: string | undefined, name: string): number | undefined {
+  const c = (code ?? '').trim().toUpperCase();
+  const n = name.toLowerCase();
+  const match = COURSE_INTERVAL_OVERRIDES.find(o => (c ? c.startsWith(o.prefix) : n.includes(o.keyword)));
+  return match?.days;
+}
+
 export function inferCategory(code: string, name: string): TreatmentCategory {
   const c = code.trim().toUpperCase();
   if (c) {
