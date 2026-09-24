@@ -7,6 +7,7 @@ import {
   TreatmentCycleStatus,
   TreatmentHistoryItem
 } from '../types';
+import { intervalOverride } from './courseCategories';
 
 export const DEFAULT_RFM_SETTINGS: RfmSettings = {
   recencyDays: 90,
@@ -23,7 +24,7 @@ export const CYCLE_INTERVAL_DAYS: Record<CycleCategory, number> = {
 
 export const CYCLE_LABELS: Record<CycleCategory, string> = {
   Lifting: 'ยกกระชับ (Lifting)',
-  Injectables: 'Botox / Neurotoxin',
+  Injectables: 'Botox / Filler',
   Skin: 'Skin Booster',
   Laser: 'Laser'
 };
@@ -134,7 +135,7 @@ export function computeCycles(treatments: TreatmentHistoryItem[], today: Date): 
 
   const cycles: TreatmentCycleStatus[] = [];
   for (const [category, { t, date }] of latest) {
-    const interval = CYCLE_INTERVAL_DAYS[category];
+    const interval = intervalOverride(t.code, t.name) ?? CYCLE_INTERVAL_DAYS[category];
     const target = new Date(date.getTime() + interval * DAY_MS);
     const dueInDays = daysBetween(today, target);
     const elapsed = daysBetween(date, today);

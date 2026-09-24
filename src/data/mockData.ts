@@ -192,7 +192,7 @@ export const INITIAL_PATIENTS: PatientRecord[] = [
     attendingDoctor: 'Dr. Kornvipa',
     doctorSpecialty: 'Dermatology & Laser',
     branch: 'Thonglor Flagship',
-    tier: 'Prestige Gold',
+    tier: 'Gold',
     signals: [
       {
         title: 'Botox Overdue 22 Days',

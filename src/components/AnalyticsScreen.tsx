@@ -32,7 +32,7 @@ export const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({
 
   const handleDownloadBoardReport = () => {
     const reportText = `=====================================================
-REVA AESTHETIC CLINIC - รายงานการกลับมาใช้บริการและรายได้
+REVA CLINIC - รายงานการกลับมาใช้บริการและรายได้
 สาขา: ${selectedBranch} | ช่วงเวลา: ${selectedMonth}
 สร้างเมื่อ: ${new Date().toLocaleDateString('th-TH')}
 =====================================================

@@ -16,7 +16,7 @@ export const LineChatModal: React.FC<LineChatModalProps> = ({
     {
       id: 'm1',
       sender: 'concierge',
-      text: `สวัสดีค่ะ คุณ${patient.name.split(' ')[1] || 'ลูกค้า'} May จาก Reva Aesthetic Clinic นะคะ ผิวเป็นอย่างไรบ้างคะ`,
+      text: `สวัสดีค่ะ คุณ${patient.name.split(' ')[1] || 'ลูกค้า'} May จาก Reva Clinic นะคะ ผิวเป็นอย่างไรบ้างคะ`,
       time: '09:15'
     },
     {

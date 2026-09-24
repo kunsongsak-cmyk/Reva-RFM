@@ -58,6 +58,12 @@ test('inferCategory uses course codes first, then names', () => {
   assert.equal(inferCategory('C-OLIX1', ''), 'Lifting');
   assert.equal(inferCategory('C-ALG2', 'anything'), 'Injectables');
   assert.equal(inferCategory('C-DIO3', ''), 'Laser');
+  for (const code of ['C-JUV1', 'C-RES2', 'C-HA1', 'C-JEL1', 'C-SCU1']) {
+    assert.equal(inferCategory(code, ''), 'Injectables', code);
+  }
+  assert.equal(inferCategory('C-SCP1', 'Sculptra'), 'Lifting');
+  assert.equal(inferCategory('', 'Juvederm Volift 1cc'), 'Injectables');
+  assert.equal(inferCategory('', 'สลายฟิลเลอร์'), 'Other');
   assert.equal(inferCategory('', 'Rejuran Healer 2cc'), 'Skin');
   assert.equal(inferCategory('', 'Pico Laser full face'), 'Laser');
   assert.equal(inferCategory('C-IV1', 'IV Drip Vitamin C'), 'Other');

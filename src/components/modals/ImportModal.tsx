@@ -23,7 +23,7 @@ interface ImportModalProps {
 
 const CATEGORY_LABELS: Record<TreatmentCategory, string> = {
   Lifting: 'Lifting',
-  Injectables: 'Botox / Neurotoxin',
+  Injectables: 'Botox / Filler (Injectables)',
   Skin: 'Skin Booster',
   Laser: 'Laser',
   Other: 'อื่นๆ (ไม่คำนวณรอบนัด)'
