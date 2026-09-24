@@ -1,0 +1,652 @@
+import React, { useState } from 'react';
+import { Patient, TreatmentHistoryItem, TimelineEvent } from '../types';
+
+interface PatientDossierScreenProps {
+  patient: Patient;
+  onOpenLineChat: (patient: Patient) => void;
+  onOpenOutcomeModal: (patient: Patient) => void;
+  onOpenBookAppointment: (patient: Patient) => void;
+  onUpdatePatient: (updated: Patient) => void;
+  onBackToQueue: () => void;
+}
+
+export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
+  patient,
+  onOpenLineChat,
+  onOpenOutcomeModal,
+  onOpenBookAppointment,
+  onUpdatePatient,
+  onBackToQueue
+}) => {
+  const [treatmentCategoryFilter, setTreatmentCategoryFilter] = useState<'All' | 'Lifting' | 'Injectables' | 'Laser'>('All');
+  const [expandChartNotes, setExpandChartNotes] = useState(true);
+  const [offerAttached, setOfferAttached] = useState(patient.recommendedProposal.offerAttached || false);
+
+  // Form states for Live Action Outcome Logger
+  const [channel, setChannel] = useState<'line' | 'phone' | 'whatsapp' | 'walkin'>('line');
+  const [outcomeOption, setOutcomeOption] = useState('Interested in Oligio X');
+  const [formNotes, setFormNotes] = useState('Khun Ananya mentioned schedule opening next Thursday. Send Oligio X recall flyer with afternoon tea reservation voucher...');
+  const [nextDate, setNextDate] = useState('2026-09-28');
+  const [nextTime, setNextTime] = useState('13:00 - 15:00 (Preferred)');
+  const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
+
+  const filterTreatments = (treatments: TreatmentHistoryItem[]) => {
+    if (treatmentCategoryFilter === 'All') return treatments;
+    return treatments.filter(t => t.category === treatmentCategoryFilter);
+  };
+
+  const handleSaveOutcome = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newTimelineEvent: TimelineEvent = {
+      id: `ev-${Date.now()}`,
+      title: `${outcomeOption} via ${channel.toUpperCase()}`,
+      timestamp: 'Today, Just now',
+      icon: channel === 'line' ? 'chat' : channel === 'phone' ? 'call' : 'check_circle',
+      iconBg: 'bg-[#006a61] text-white',
+      description: formNotes,
+      statusTag: 'Logged by Khun May'
+    };
+
+    const updatedPatient: Patient = {
+      ...patient,
+      timeline: [newTimelineEvent, ...patient.timeline]
+    };
+
+    onUpdatePatient(updatedPatient);
+    setSaveSuccessNotice(true);
+    setTimeout(() => setSaveSuccessNotice(false), 3000);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Breadcrumb Trail */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[13px] text-[#45464d]">
+          <button
+            onClick={onBackToQueue}
+            className="hover:text-[#006a61] flex items-center gap-1 font-medium transition-colors"
+          >
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Clinical Operations</span>
+          </button>
+          <span>/</span>
+          <span className="hover:text-[#006a61] cursor-pointer" onClick={onBackToQueue}>
+            Today's Queue
+          </span>
+          <span>/</span>
+          <span className="font-semibold text-[#0b1c30]">
+            Dossier • {patient.name}
+          </span>
+        </div>
+
+        {saveSuccessNotice && (
+          <div className="px-3 py-1.5 rounded-lg bg-[#86f2e4]/30 border border-[#006a61]/30 text-[#006a61] text-[12px] font-semibold flex items-center gap-1.5 animate-in fade-in">
+            <span className="material-symbols-outlined text-[16px]">check_circle</span>
+            <span>Outcome recorded and timeline synchronized.</span>
+          </div>
+        )}
+      </div>
+
+      {/* Patient Dossier Header Banner */}
+      <div className="bg-white rounded-2xl border border-[#c6c6cd]/40 p-6 shadow-xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          {/* Left: Avatar & Patient Meta */}
+          <div className="flex items-start sm:items-center gap-4">
+            {patient.avatarUrl ? (
+              <img
+                src={patient.avatarUrl}
+                alt={patient.name}
+                referrerPolicy="no-referrer"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#eff4ff] shadow-sm shrink-0"
+              />
+            ) : (
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[#006a61] text-[24px] shrink-0 shadow-sm">
+                {patient.name.slice(5, 7) || 'VIP'}
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="font-['Plus_Jakarta_Sans'] text-[22px] sm:text-[24px] font-bold text-[#0b1c30] leading-none">
+                  {patient.name} <span className="text-[16px] font-normal text-[#45464d]">({patient.nickname})</span>
+                </h1>
+                <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#ffdad6] text-[#ba1a1a]">
+                  {patient.category.toUpperCase()} (RFM: {patient.rfmScore.recencyScore}-{patient.rfmScore.frequencyScore}-{patient.rfmScore.monetaryScore})
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 text-[12px] text-[#45464d]">
+                <span className="font-mono text-[#006a61] font-semibold">HN: {patient.hn}</span>
+                <span>•</span>
+                <span>Age: {patient.age}</span>
+                <span>•</span>
+                <span>{patient.nationality}</span>
+                <span>•</span>
+                <span className="text-[#00a000] font-semibold flex items-center gap-0.5">
+                  <span className="material-symbols-outlined text-[14px]">chat</span>
+                  {patient.lineId}
+                </span>
+                <span>•</span>
+                <span className="font-mono">{patient.phone}</span>
+              </div>
+
+              {/* Assignment Tags */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
+                <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
+                  <span className="text-[#76777d]">Sales Owner:</span>
+                  <strong>{patient.salesOwner}</strong> ({patient.salesOwnerRole})
+                </span>
+                <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
+                  <span className="text-[#76777d]">Doctor:</span>
+                  <strong>{patient.attendingDoctor}</strong> ({patient.doctorSpecialty})
+                </span>
+                <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
+                  <span className="text-[#76777d]">Branch:</span>
+                  <strong>{patient.branch}</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Priority Score & Primary Actions */}
+          <div className="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end justify-between gap-4">
+            <div className="text-left sm:text-right">
+              <div className="flex items-center gap-2 justify-start sm:justify-end">
+                <span className="text-[11px] font-semibold text-[#76777d] uppercase tracking-wider">
+                  Priority Score
+                </span>
+                <span className="font-['JetBrains_Mono'] text-[24px] font-bold text-[#ba1a1a]">
+                  {patient.priorityScore} <span className="text-[14px] text-[#76777d] font-normal">/ 100</span>
+                </span>
+              </div>
+              <span className="text-[11px] font-bold text-[#ba1a1a] uppercase tracking-wider block">
+                {patient.priorityLevel} Priority • Immediate Outreach
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => onOpenLineChat(patient)}
+                className="px-3.5 py-2 rounded-lg bg-[#00b900] hover:bg-[#009b00] text-white text-[12px] font-semibold flex items-center gap-1.5 transition-transform active:scale-95 shadow-xs"
+              >
+                <span className="material-symbols-outlined text-[17px]">chat</span>
+                <span>LINE OA Chat</span>
+              </button>
+
+              <a
+                href={`tel:${patient.phone}`}
+                className="px-3.5 py-2 rounded-lg bg-[#eff4ff] hover:bg-[#dce9ff] text-[#006a61] text-[12px] font-semibold flex items-center gap-1.5 transition-colors border border-[#c6c6cd]/30"
+              >
+                <span className="material-symbols-outlined text-[17px]">call</span>
+                <span>Call Client</span>
+              </a>
+
+              <button
+                onClick={() => onOpenBookAppointment(patient)}
+                className="px-3.5 py-2 rounded-lg bg-white hover:bg-[#eff4ff] text-[#0b1c30] text-[12px] font-semibold flex items-center gap-1.5 transition-colors border border-[#c6c6cd]/50 shadow-xs"
+              >
+                <span className="material-symbols-outlined text-[17px] text-[#006a61]">calendar_today</span>
+                <span>Book Appointment</span>
+              </button>
+
+              <button
+                onClick={() => onOpenOutcomeModal(patient)}
+                className="px-3.5 py-2 rounded-lg bg-black hover:bg-slate-800 text-white text-[12px] font-semibold flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[17px]">rate_review</span>
+                <span>Record Outcome</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3-Zone Architecture */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* ================= ZONE 1 (Left 4 cols): Value, RFM & Why Today ================= */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Card 1: Patient Financial & RFM Value */}
+          <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
+              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                Patient Value & RFM Intelligence
+              </span>
+              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#eff4ff] text-[#006a61] border border-[#86f2e4]/30">
+                {patient.tier} Tier
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg bg-[#eff4ff]/60 border border-[#c6c6cd]/30">
+                <span className="text-[11px] text-[#45464d] block">Lifetime Value (LTV)</span>
+                <span className="font-['Plus_Jakarta_Sans'] text-[18px] font-bold text-[#0b1c30]">
+                  ฿{(patient.lifetimeValue).toLocaleString()}
+                </span>
+              </div>
+              <div className="p-3 rounded-lg bg-[#eff4ff]/60 border border-[#c6c6cd]/30">
+                <span className="text-[11px] text-[#45464d] block">Trailing 12M Spend</span>
+                <span className="font-['Plus_Jakarta_Sans'] text-[18px] font-bold text-[#0b1c30]">
+                  ฿{(patient.trailing12M).toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[12px] pt-1 border-t border-[#c6c6cd]/25">
+              <span className="text-[#45464d]">Average Ticket Size</span>
+              <span className="font-semibold text-[#0b1c30]">฿{(patient.avgTicket).toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="text-[#45464d]">Completed Clinical Visits</span>
+              <span className="font-semibold text-[#0b1c30]">{patient.completedVisits} visits</span>
+            </div>
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="text-[#45464d]">Last Visit Recency</span>
+              <span className="font-semibold text-[#ba1a1a]">{patient.lastVisitRecencyDays}d ago ({patient.lastVisitDate})</span>
+            </div>
+
+            {/* RFM Score Detail Matrix */}
+            <div className="p-3.5 rounded-xl bg-[#eff4ff]/80 border border-[#c6c6cd]/30 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#0b1c30] uppercase tracking-wider">
+                  RFM Sub-Index Breakdown
+                </span>
+                <span className="font-mono text-[11px] font-bold text-[#006a61]">
+                  Score: {patient.rfmScore.recencyScore} · {patient.rfmScore.frequencyScore} · {patient.rfmScore.monetaryScore}
+                </span>
+              </div>
+
+              <div className="space-y-1.5 text-[11px] text-[#45464d]">
+                <div className="flex items-start gap-1.5">
+                  <strong className="text-[#ba1a1a] shrink-0">Recency (2/5):</strong>
+                  <span>{patient.rfmScore.recencyLabel}</span>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <strong className="text-[#006a61] shrink-0">Frequency (5/5):</strong>
+                  <span>{patient.rfmScore.frequencyLabel}</span>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <strong className="text-[#0b1c30] shrink-0">Monetary (4/5):</strong>
+                  <span>{patient.rfmScore.monetaryLabel}</span>
+                </div>
+              </div>
+
+              <div className="p-2 rounded bg-white text-[11px] text-[#0b1c30] border border-[#c6c6cd]/30 leading-snug">
+                <strong className="text-[#006a61]">Matrix Verdict:</strong> {patient.rfmScore.matrixVerdit}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Why Follow Up Today? */}
+          <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-[#c6c6cd]/30">
+              <span className="material-symbols-outlined text-[20px] text-[#ba1a1a]">warning</span>
+              <span className="font-['Inter'] text-[12px] font-bold uppercase tracking-wider text-[#0b1c30]">
+                Why Follow Up Today?
+              </span>
+            </div>
+
+            <div className="space-y-3 text-[12px]">
+              <div className="p-3 rounded-lg bg-[#ffdad6]/40 border border-[#ba1a1a]/20">
+                <span className="font-bold text-[#ba1a1a] block mb-0.5">
+                  Lifting Procedure Overdue by 37 Days
+                </span>
+                <p className="text-[#45464d] text-[11px] leading-snug">
+                  Target milestone was 15 August 2026. Clinical ultrasound data indicates collagen remodeling phase has completed; skin laxity rebound is beginning.
+                </p>
+              </div>
+
+              {patient.signals.map((sig, idx) => (
+                <div key={idx} className="flex items-start gap-2.5">
+                  <span className={`material-symbols-outlined text-[18px] ${sig.iconColor} shrink-0 mt-0.5`}>
+                    {sig.icon}
+                  </span>
+                  <div>
+                    <strong className="text-[#0b1c30] block">{sig.title}</strong>
+                    <span className="text-[#45464d] text-[11px] leading-snug">{sig.description}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Recommended Proposal */}
+            <div className="p-3.5 rounded-xl bg-[#e5eeff] border border-[#006a61]/30 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#006a61] flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px]">verified</span>
+                  Recommended Clinical Proposal
+                </span>
+              </div>
+              <p className="text-[12px] font-semibold text-[#0b1c30] leading-snug">
+                {patient.recommendedProposal.title}
+              </p>
+              <p className="text-[11px] text-[#45464d]">
+                {patient.recommendedProposal.subtitle}
+              </p>
+
+              <button
+                onClick={() => setOfferAttached(!offerAttached)}
+                className={`w-full mt-1 py-1.5 px-2.5 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-1.5 ${
+                  offerAttached
+                    ? 'bg-[#006a61] text-white'
+                    : 'bg-white text-[#006a61] border border-[#006a61]/30 hover:bg-[#eff4ff]'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[14px]">
+                  {offerAttached ? 'check' : 'local_offer'}
+                </span>
+                <span>{offerAttached ? 'Offer Attached to Concierge Message' : 'Attach Offer to Direct Message'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= ZONE 2 (Center 5 cols): Cycles & Journey ================= */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* Card: Treatment Cycle Status Engine */}
+          <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
+              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                Treatment Cycle Status Engine
+              </span>
+              <span className="text-[11px] text-[#76777d]">Based on Clinical Efficacy Half-Life</span>
+            </div>
+
+            <div className="space-y-3">
+              {patient.cycles.map((cyc, idx) => (
+                <div key={idx} className="p-3.5 rounded-xl bg-[#eff4ff]/50 border border-[#c6c6cd]/30 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-['Plus_Jakarta_Sans'] font-semibold text-[13px] text-[#0b1c30]">
+                      {cyc.protocolName}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      cyc.overduePillType === 'error'
+                        ? 'bg-[#ffdad6] text-[#ba1a1a]'
+                        : cyc.overduePillType === 'secondary'
+                        ? 'bg-[#86f2e4]/30 text-[#006a61]'
+                        : 'bg-[#e5eeff] text-[#0b1c30]'
+                    }`}>
+                      {cyc.overduePillText}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-[11px] text-[#45464d]">
+                    <div>
+                      <span>Last: </span>
+                      <strong className="text-[#0b1c30]">{cyc.lastTreatment}</strong>
+                      <span className="block text-[10px] text-[#76777d]">Date: {cyc.lastDate}</span>
+                    </div>
+                    <div className="text-right">
+                      <span>Target Window: </span>
+                      <strong className="text-[#0b1c30]">{cyc.targetDate}</strong>
+                      <span className="block font-semibold text-[#ba1a1a]">{cyc.daysDiff}</span>
+                    </div>
+                  </div>
+
+                  {/* Visual Progress bar */}
+                  <div className="w-full bg-[#eff4ff] h-1.5 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        cyc.isOverdue ? 'bg-[#ba1a1a]' : 'bg-[#006a61]'
+                      }`}
+                      style={{ width: `${Math.max(cyc.progressPercent, 10)}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Card: Clinical Treatment Journey */}
+          <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#c6c6cd]/30">
+              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                Clinical Treatment Journey (7 Procedures)
+              </span>
+
+              <button
+                onClick={() => setExpandChartNotes(!expandChartNotes)}
+                className="text-[11px] text-[#006a61] font-semibold hover:underline flex items-center gap-1"
+              >
+                <span>{expandChartNotes ? 'Collapse Notes' : 'Expand Chart Notes'}</span>
+                <span className="material-symbols-outlined text-[14px]">
+                  {expandChartNotes ? 'expand_less' : 'expand_more'}
+                </span>
+              </button>
+            </div>
+
+            {/* Filter buttons */}
+            <div className="flex items-center gap-1.5">
+              {(['All', 'Lifting', 'Injectables', 'Laser'] as const).map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setTreatmentCategoryFilter(cat)}
+                  className={`px-3 py-1 rounded-md text-[11px] font-semibold transition-colors ${
+                    treatmentCategoryFilter === cat
+                      ? 'bg-[#131b2e] text-white'
+                      : 'bg-[#eff4ff] text-[#45464d] hover:text-[#0b1c30]'
+                  }`}
+                >
+                  {cat} {cat === 'All' ? '(7)' : cat === 'Lifting' ? '(3)' : cat === 'Injectables' ? '(3)' : '(1)'}
+                </button>
+              ))}
+            </div>
+
+            {/* Procedure cards */}
+            <div className="space-y-3">
+              {filterTreatments(patient.treatments).map(t => (
+                <div
+                  key={t.id}
+                  className="p-3.5 rounded-xl bg-white border border-[#c6c6cd]/40 hover:border-[#006a61]/40 transition-colors shadow-2xs space-y-2"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h4 className="font-['Plus_Jakarta_Sans'] font-semibold text-[13px] text-[#0b1c30]">
+                        {t.name}
+                      </h4>
+                      <div className="flex items-center gap-2 text-[11px] text-[#45464d] mt-0.5">
+                        <span className="font-medium">{t.date}</span>
+                        <span>•</span>
+                        <span>{t.doctor}</span>
+                        <span>•</span>
+                        <strong className="text-[#0b1c30]">฿{(t.price).toLocaleString()}</strong>
+                      </div>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
+                      t.statusType === 'error'
+                        ? 'bg-[#ffdad6] text-[#ba1a1a]'
+                        : t.statusType === 'secondary'
+                        ? 'bg-[#86f2e4]/30 text-[#006a61]'
+                        : 'bg-slate-100 text-[#45464d]'
+                    }`}>
+                      {t.statusBadge}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-[#45464d]">
+                    {t.details}
+                  </p>
+
+                  {/* Chart Notes & Review */}
+                  {expandChartNotes && (t.review || t.notes) && (
+                    <div className="pt-2 border-t border-[#c6c6cd]/25 space-y-1.5 bg-[#eff4ff]/40 p-2.5 rounded-lg text-[11px]">
+                      {t.review && (
+                        <div className="flex items-center gap-1.5 text-[#006a61]">
+                          <span className="material-symbols-outlined text-[14px]">star</span>
+                          <span className="font-semibold">{t.review.stars}.0 Patient Review:</span>
+                          <span className="text-[#45464d] italic">"{t.review.text}"</span>
+                        </div>
+                      )}
+                      {t.notes && (
+                        <div className="text-[#0b1c30]">
+                          <span className="text-[#76777d]">Doctor Note: </span>
+                          {t.notes}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ================= ZONE 3 (Right 3 cols): Live Action & Timeline ================= */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Card: Log Follow-up Outcome (Live Action) */}
+          <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
+              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                Log Follow-up Outcome
+              </span>
+              <span className="px-2 py-0.5 rounded bg-black text-white text-[10px] font-semibold">
+                Live Action
+              </span>
+            </div>
+
+            <form onSubmit={handleSaveOutcome} className="space-y-3.5">
+              {/* Channel */}
+              <div>
+                <label className="block text-[11px] font-semibold text-[#0b1c30] mb-1">
+                  Channel
+                </label>
+                <div className="grid grid-cols-4 gap-1 p-1 bg-[#eff4ff] rounded-lg text-center text-[11px]">
+                  {(['line', 'phone', 'whatsapp', 'walkin'] as const).map(ch => (
+                    <button
+                      key={ch}
+                      type="button"
+                      onClick={() => setChannel(ch)}
+                      className={`py-1 rounded font-semibold transition-all uppercase ${
+                        channel === ch
+                          ? 'bg-white text-[#006a61] shadow-xs'
+                          : 'text-[#45464d] hover:text-[#0b1c30]'
+                      }`}
+                    >
+                      {ch}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Consultation Outcome */}
+              <div>
+                <label className="block text-[11px] font-semibold text-[#0b1c30] mb-1">
+                  Consultation Outcome
+                </label>
+                <div className="space-y-1">
+                  {[
+                    'Interested in Oligio X',
+                    'Contact Later',
+                    'No Response',
+                    'Appointment Booked',
+                    'Not Interested'
+                  ].map((opt, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setOutcomeOption(opt)}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors flex items-center justify-between ${
+                        outcomeOption === opt
+                          ? 'bg-[#131b2e] text-white font-semibold'
+                          : 'bg-[#eff4ff]/60 text-[#0b1c30] hover:bg-[#eff4ff]'
+                      }`}
+                    >
+                      <span>{opt}</span>
+                      {outcomeOption === opt && (
+                        <span className="material-symbols-outlined text-[14px]">check</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="block text-[11px] font-semibold text-[#0b1c30] mb-1">
+                  Concierge Notes
+                </label>
+                <textarea
+                  rows={3}
+                  value={formNotes}
+                  onChange={e => setFormNotes(e.target.value)}
+                  className="w-full p-2.5 text-[12px] bg-[#eff4ff] rounded-lg outline-none border border-transparent focus:border-[#006a61] text-[#0b1c30]"
+                />
+              </div>
+
+              {/* Next follow-up */}
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-semibold text-[#0b1c30]">
+                  Next Follow-up Window
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="date"
+                    value={nextDate}
+                    onChange={e => setNextDate(e.target.value)}
+                    className="h-8 px-2 rounded-lg bg-[#eff4ff] text-[11px] border border-[#c6c6cd]/40 text-[#0b1c30]"
+                  />
+                  <select
+                    value={nextTime}
+                    onChange={e => setNextTime(e.target.value)}
+                    className="h-8 px-1.5 rounded-lg bg-[#eff4ff] text-[10px] border border-[#c6c6cd]/40 text-[#0b1c30]"
+                  >
+                    <option value="13:00 - 15:00 (Preferred)">13:00-15:00</option>
+                    <option value="10:00 - 12:00">10:00-12:00</option>
+                    <option value="16:00 - 18:00">16:00-18:00</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 rounded-lg bg-black hover:bg-slate-800 text-white font-semibold text-[12px] flex items-center justify-center gap-1.5 transition-transform active:scale-95 shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[16px]">verified_user</span>
+                <span>Save & Update Patient Status</span>
+              </button>
+            </form>
+          </div>
+
+          {/* Card: Unified CRM Timeline */}
+          <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
+              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                Unified CRM Timeline
+              </span>
+              <span className="text-[11px] text-[#006a61] font-semibold">Live Sync</span>
+            </div>
+
+            <div className="space-y-4">
+              {patient.timeline.map((ev, idx) => (
+                <div key={ev.id || idx} className="relative pl-6 pb-2 border-l border-[#c6c6cd]/40 last:border-l-0">
+                  <div className={`absolute -left-2 top-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${ev.iconBg}`}>
+                    <span className="material-symbols-outlined text-[10px]">{ev.icon}</span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-semibold text-[#0b1c30]">{ev.title}</span>
+                      <span className="text-[10px] text-[#76777d]">{ev.timestamp}</span>
+                    </div>
+                    <p className="text-[11px] text-[#45464d] mt-0.5 leading-snug">
+                      {ev.description}
+                    </p>
+                    {ev.statusTag && (
+                      <span className="inline-block mt-1 text-[10px] text-[#006a61] font-semibold">
+                        {ev.statusTag}
+                      </span>
+                    )}
+                    {ev.quote && (
+                      <p className="mt-1 text-[11px] text-[#0b1c30] italic bg-[#eff4ff] p-2 rounded">
+                        {ev.quote}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
