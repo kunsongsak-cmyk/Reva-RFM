@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScreenType, PatientCategory, Patient } from '../types';
 import { isDueSoon, isOverdue, needsFollowUp } from '../lib/rfm';
+import revaLogo from '../assets/reva-logo.png';
 
 interface SidebarProps {
   patients: Patient[];
@@ -28,17 +29,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => onNavigate('todays-queue')}
           className="h-16 px-6 flex items-center gap-3 border-b border-[#c6c6cd]/30 cursor-pointer hover:bg-slate-50/60 transition-colors"
         >
-          <div className="w-9 h-9 rounded-lg bg-black flex items-center justify-center text-white shadow-xs">
-            <span className="material-symbols-outlined text-[20px]">spa</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-display font-semibold text-[18px] tracking-tight text-[#0b1c30] leading-none">
-              Reva Clinic
-            </span>
-            <span className="font-sans text-[11px] font-medium uppercase tracking-widest text-[#45464d] mt-0.5">
-              Bangkok · CRM
-            </span>
-          </div>
+          <img src={revaLogo} alt="Reva Aesthetic Clinic" className="h-10 w-auto" />
+          <span className="ml-auto px-2 py-0.5 rounded-md bg-[#124e91]/10 text-[#124e91] font-sans text-[11px] font-bold tracking-widest">
+            CRM
+          </span>
         </div>
 
         {/* Navigation Sections */}
