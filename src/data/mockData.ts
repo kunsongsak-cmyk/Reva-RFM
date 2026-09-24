@@ -746,14 +746,14 @@ export const RFM_COHORTS_SUMMARY = [
     avgSpend: '฿88,000',
     color: 'bg-error',
     textColor: 'text-on-error-container',
-    highlightBadge: '฿25.1M Total At-Risk LTV',
+    highlightBadge: 'LTV รวม ฿25.1M',
     isDanger: true
   },
   {
     name: 'Lost / Inactive',
     count: 621,
     percent: 30,
-    avgSpend: 'Win-Back Protocol Active',
+    avgSpend: 'อยู่ระหว่างแคมเปญดึงกลับ',
     color: 'bg-outline-variant',
     textColor: 'text-on-surface-variant'
   }
@@ -762,41 +762,41 @@ export const RFM_COHORTS_SUMMARY = [
 export const RETENTION_FUNNEL_STAGES = [
   {
     step: 1,
-    name: 'Follow-up Assigned',
-    patients: '1,420 Patients',
+    name: 'ได้รับมอบหมายให้ติดตาม',
+    patients: '1,420 ราย',
     rate: '100%',
     widthPercent: 100,
     color: 'bg-primary'
   },
   {
     step: 2,
-    name: 'Contacted / Reached',
-    patients: '1,083 Patients',
-    rate: '76.3% Contact Rate',
+    name: 'ติดต่อได้',
+    patients: '1,083 ราย',
+    rate: 'ติดต่อได้ 76.3%',
     widthPercent: 76.3,
     color: 'bg-primary'
   },
   {
     step: 3,
-    name: 'Consulted & Interested',
-    patients: '326 Patients',
-    rate: '30.1% Interest Rate',
+    name: 'ปรึกษาแล้วสนใจ',
+    patients: '326 ราย',
+    rate: 'สนใจ 30.1%',
     widthPercent: 30.1,
     color: 'bg-primary'
   },
   {
     step: 4,
-    name: 'Appointments Booked',
-    patients: '241 Appointments',
-    rate: '73.9% Booking Rate',
+    name: 'จองนัดแล้ว',
+    patients: '241 นัด',
+    rate: 'จองนัด 73.9%',
     widthPercent: 22.2,
     color: 'bg-secondary'
   },
   {
     step: 5,
-    name: 'Completed Clinical Visits',
-    patients: '186 Visits',
-    rate: '77.2% Show-up',
+    name: 'มารับบริการแล้ว',
+    patients: '186 ครั้ง',
+    rate: 'มาตามนัด 77.2%',
     widthPercent: 17.2,
     color: 'bg-secondary',
     isFinal: true

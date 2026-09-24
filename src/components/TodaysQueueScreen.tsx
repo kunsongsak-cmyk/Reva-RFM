@@ -52,11 +52,11 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-['Plus_Jakarta_Sans'] text-[24px] font-bold text-[#0b1c30] tracking-tight">
-            Good morning, Khun May
+          <h1 className="font-display text-[24px] font-bold text-[#0b1c30] tracking-tight">
+            สวัสดีตอนเช้า คุณ May
           </h1>
-          <p className="font-['Inter'] text-[14px] text-[#45464d] mt-0.5">
-            You have <strong className="text-[#006a61]">18 critical priority recall cycles</strong> requiring clinical outreach today at Thonglor Flagship.
+          <p className="font-sans text-[14px] text-[#45464d] mt-0.5">
+            วันนี้มี <strong className="text-[#006a61]">คนไข้ที่ต้องติดตามด่วน 18 ราย</strong> ที่ถึงรอบนัดและควรติดต่อกลับ
           </p>
         </div>
 
@@ -66,14 +66,14 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
             className="px-4 py-2 bg-white border border-[#c6c6cd]/50 hover:bg-[#eff4ff] text-[#0b1c30] text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
           >
             <span className="material-symbols-outlined text-[18px] text-[#006a61]">add_circle</span>
-            <span>Quick Appointment</span>
+            <span>จองนัดด่วน</span>
           </button>
           <button
             onClick={() => onOpenOutcome(selectedPatient)}
             className="px-4 py-2 bg-black hover:bg-slate-800 text-white text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
           >
             <span className="material-symbols-outlined text-[18px]">rate_review</span>
-            <span>Log Contact Outcome</span>
+            <span>บันทึกผลการติดต่อ</span>
           </button>
         </div>
       </div>
@@ -83,18 +83,18 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
         {/* Metric 1 */}
         <div className="p-4 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium text-[#45464d]">Follow-up Due Today</span>
+            <span className="text-[12px] font-medium text-[#45464d]">ต้องติดตามวันนี้</span>
             <div className="w-8 h-8 rounded-lg bg-[#eff4ff] flex items-center justify-center text-[#006a61]">
               <span className="material-symbols-outlined text-[18px]">checklist</span>
             </div>
           </div>
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
-              <span className="font-['Plus_Jakarta_Sans'] text-[26px] font-bold text-[#0b1c30] tracking-tight">
+              <span className="font-display text-[26px] font-bold text-[#0b1c30] tracking-tight">
                 48
               </span>
               <span className="text-[11px] font-semibold text-[#006a61]">
-                12 of 48 contacted (25%)
+                ติดต่อแล้ว 12 จาก 48 (25%)
               </span>
             </div>
             {/* Progress bar */}
@@ -107,22 +107,22 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
         {/* Metric 2 */}
         <div className="p-4 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium text-[#45464d]">Overdue Milestones</span>
+            <span className="text-[12px] font-medium text-[#45464d]">เลยกำหนดนัด</span>
             <div className="w-8 h-8 rounded-lg bg-[#ffdad6] flex items-center justify-center text-[#93000a]">
               <span className="material-symbols-outlined text-[18px]">alarm_on</span>
             </div>
           </div>
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
-              <span className="font-['Plus_Jakarta_Sans'] text-[26px] font-bold text-[#ba1a1a] tracking-tight">
+              <span className="font-display text-[26px] font-bold text-[#ba1a1a] tracking-tight">
                 17
               </span>
               <span className="text-[11px] font-medium text-[#ba1a1a]">
-                Critical attention (+4)
+                ต้องรีบติดต่อ (+4)
               </span>
             </div>
             <p className="text-[11px] text-[#45464d] mt-1.5 truncate">
-              Skin laxity rebound initiated on 8 patients
+              ผลการยกกระชับเริ่มลดลงแล้ว 8 ราย
             </p>
           </div>
         </div>
@@ -130,22 +130,22 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
         {/* Metric 3 */}
         <div className="p-4 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium text-[#45464d]">Bookings Secured</span>
+            <span className="text-[12px] font-medium text-[#45464d]">จองนัดสำเร็จ</span>
             <div className="w-8 h-8 rounded-lg bg-[#eff4ff] flex items-center justify-center text-[#006a61]">
               <span className="material-symbols-outlined text-[18px]">calendar_today</span>
             </div>
           </div>
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
-              <span className="font-['Plus_Jakarta_Sans'] text-[26px] font-bold text-[#0b1c30] tracking-tight">
+              <span className="font-display text-[26px] font-bold text-[#0b1c30] tracking-tight">
                 12 <span className="text-[15px] font-normal text-[#76777d]">/ 15</span>
               </span>
               <span className="text-[11px] font-semibold text-[#006a61]">
-                80% of daily target
+                80% ของเป้ารายวัน
               </span>
             </div>
             <p className="text-[11px] text-[#45464d] mt-1.5 truncate">
-              ฿342,000 projected pipeline booked
+              ยอดคาดการณ์จากนัดที่จอง ฿342,000
             </p>
           </div>
         </div>
@@ -153,22 +153,22 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
         {/* Metric 4 */}
         <div className="p-4 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium text-[#45464d]">CRM Attributed MTD</span>
+            <span className="text-[12px] font-medium text-[#45464d]">ยอดขายจาก CRM เดือนนี้</span>
             <div className="w-8 h-8 rounded-lg bg-[#eff4ff] flex items-center justify-center text-[#006a61]">
               <span className="material-symbols-outlined text-[18px]">monetization_on</span>
             </div>
           </div>
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
-              <span className="font-['Plus_Jakarta_Sans'] text-[24px] font-bold text-[#0b1c30] tracking-tight">
+              <span className="font-display text-[24px] font-bold text-[#0b1c30] tracking-tight">
                 ฿428,500
               </span>
               <span className="text-[11px] font-semibold text-[#006a61]">
-                +18.4% MoM
+                +18.4% จากเดือนก่อน
               </span>
             </div>
             <p className="text-[11px] text-[#45464d] mt-1.5 truncate">
-              Verified clinical recall ROI: 14.2x
+              ROI จากการติดตามคนไข้: 14.2x
             </p>
           </div>
         </div>
@@ -182,11 +182,11 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
           <div className="px-5 pt-4 pb-2 border-b border-[#c6c6cd]/30 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
               {[
-                { label: 'All Priority (18)', key: 'All' },
-                { label: 'Treatment Due (9)', key: 'Treatment Due' },
+                { label: 'ทั้งหมด (18)', key: 'All' },
+                { label: 'ถึงรอบ Treatment (9)', key: 'Treatment Due' },
                 { label: 'At Risk (5)', key: 'At Risk' },
-                { label: 'New Patient 2nd Visit (3)', key: 'New Patient' },
-                { label: 'Overdue (1)', key: 'Overdue' }
+                { label: 'คนไข้ใหม่ครั้งที่ 2 (3)', key: 'New Patient' },
+                { label: 'เลยกำหนด (1)', key: 'Overdue' }
               ].map(t => (
                 <button
                   key={t.key}
@@ -212,7 +212,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                 onChange={e => setProcedureFilter(e.target.value)}
                 className="h-8 px-2.5 rounded-lg bg-white border border-[#c6c6cd]/40 text-[#0b1c30] outline-none font-medium"
               >
-                <option value="All Procedures">All Procedures</option>
+                <option value="All Procedures">ทุกหัตถการ</option>
                 <option value="Lifting">Lifting (Oligio X / Ulthera)</option>
                 <option value="Injectables">Injectables (Botox)</option>
                 <option value="Skin">Skin Booster (Rejuran / PN)</option>
@@ -223,7 +223,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                 onChange={e => setDoctorFilter(e.target.value)}
                 className="h-8 px-2.5 rounded-lg bg-white border border-[#c6c6cd]/40 text-[#0b1c30] outline-none font-medium"
               >
-                <option value="All Doctors">All Doctors</option>
+                <option value="All Doctors">แพทย์ทุกท่าน</option>
                 <option value="Dr. Kornvipa">Dr. Kornvipa</option>
                 <option value="Dr. Vorapat">Dr. Vorapat</option>
               </select>
@@ -232,7 +232,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Search queue..."
+                placeholder="ค้นหาในคิว..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="h-8 px-2.5 rounded-lg bg-white border border-[#c6c6cd]/40 text-[#0b1c30] placeholder:text-[#76777d] outline-none w-36 sm:w-48"
@@ -245,11 +245,11 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#c6c6cd]/30 bg-[#eff4ff]/60 text-[11px] font-semibold text-[#45464d] uppercase tracking-wider">
-                  <th className="py-3 px-4">Patient & RFM Tier</th>
-                  <th className="py-3 px-3">Recall Trigger & Efficacy Decay</th>
-                  <th className="py-3 px-3">Clinical Owner & Doctor</th>
-                  <th className="py-3 px-3 text-center">Priority</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4">คนไข้ & กลุ่ม RFM</th>
+                  <th className="py-3 px-3">เหตุผลที่ต้องติดตาม</th>
+                  <th className="py-3 px-3">ผู้ดูแล & แพทย์</th>
+                  <th className="py-3 px-3 text-center">ความเร่งด่วน</th>
+                  <th className="py-3 px-4 text-right">จัดการ</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#c6c6cd]/25 text-[13px]">
@@ -281,7 +281,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                             </div>
                           )}
                           <div>
-                            <div className="font-['Plus_Jakarta_Sans'] font-semibold text-[#0b1c30] flex items-center gap-1.5 leading-snug">
+                            <div className="font-display font-semibold text-[#0b1c30] flex items-center gap-1.5 leading-snug">
                               <span>{p.name}</span>
                               <span className="text-[11px] font-normal text-[#45464d]">
                                 ({p.nickname})
@@ -311,7 +311,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                             {p.priorityReason}
                           </span>
                           <span className="text-[11px] text-[#76777d]">
-                            Last Visit: {p.lastVisitRecencyDays}d ago ({p.lastVisitDate})
+                            มาล่าสุด: {p.lastVisitRecencyDays} วันก่อน ({p.lastVisitDate})
                           </span>
                         </div>
                       </td>
@@ -327,7 +327,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                       {/* Priority Score */}
                       <td className="py-3 px-3 text-center">
                         <div className="inline-flex flex-col items-center">
-                          <span className={`font-['JetBrains_Mono'] text-[13px] font-bold ${
+                          <span className={`font-mono text-[13px] font-bold ${
                             p.priorityScore >= 90
                               ? 'text-[#ba1a1a]'
                               : p.priorityScore >= 80
@@ -347,7 +347,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                         <div className="flex items-center justify-end gap-1.5" onClick={e => e.stopPropagation()}>
                           <button
                             onClick={() => onOpenLineChat(p)}
-                            title="LINE OA Direct Concierge"
+                            title="ส่งข้อความ LINE OA"
                             className="w-8 h-8 rounded-lg bg-[#00b900]/10 hover:bg-[#00b900]/20 text-[#00a000] flex items-center justify-center transition-colors"
                           >
                             <span className="material-symbols-outlined text-[17px]">chat</span>
@@ -355,7 +355,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
 
                           <a
                             href={`tel:${p.phone}`}
-                            title="Call Patient"
+                            title="โทรหาคนไข้"
                             className="w-8 h-8 rounded-lg bg-[#eff4ff] hover:bg-[#dce9ff] text-[#006a61] flex items-center justify-center transition-colors"
                           >
                             <span className="material-symbols-outlined text-[17px]">call</span>
@@ -363,7 +363,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
 
                           <button
                             onClick={() => onOpenOutcome(p)}
-                            title="Log Contact Outcome"
+                            title="บันทึกผลการติดต่อ"
                             className="w-8 h-8 rounded-lg bg-[#eff4ff] hover:bg-[#dce9ff] text-[#0b1c30] flex items-center justify-center transition-colors"
                           >
                             <span className="material-symbols-outlined text-[17px]">rate_review</span>
@@ -374,10 +374,10 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                               onSelectPatient(p);
                               onNavigate('patient-detail');
                             }}
-                            title="View Full 360° Profile"
+                            title="ดูโปรไฟล์เต็ม"
                             className="px-2.5 py-1.5 rounded-lg bg-black hover:bg-slate-800 text-white text-[11px] font-semibold flex items-center gap-1 transition-transform active:scale-95 shadow-xs"
                           >
-                            <span>Dossier</span>
+                            <span>โปรไฟล์</span>
                             <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
                           </button>
                         </div>
@@ -390,8 +390,8 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
           </div>
 
           <div className="p-3 border-t border-[#c6c6cd]/30 bg-[#eff4ff]/40 flex items-center justify-between text-[11px] text-[#45464d]">
-            <span>Showing {filteredPatients.length} of 18 priority queue patients</span>
-            <span className="font-semibold text-[#006a61]">Next automated sync: 15:00</span>
+            <span>แสดง {filteredPatients.length} จาก 18 รายในคิว</span>
+            <span className="font-semibold text-[#006a61]">ซิงก์ข้อมูลครั้งถัดไป: 15:00</span>
           </div>
         </div>
 
@@ -399,14 +399,14 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
         <div className="lg:col-span-4 bg-white rounded-xl border border-[#c6c6cd]/40 shadow-xs p-5 space-y-5 sticky top-20">
           {/* Header of Drawer */}
           <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
-            <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-              Fast Patient Dossier
+            <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+              ข้อมูลคนไข้โดยย่อ
             </span>
             <button
               onClick={() => onNavigate('patient-detail')}
               className="text-[12px] font-semibold text-[#006a61] hover:underline flex items-center gap-0.5"
             >
-              <span>Full 360° View</span>
+              <span>ดูโปรไฟล์เต็ม</span>
               <span className="material-symbols-outlined text-[14px]">open_in_new</span>
             </button>
           </div>
@@ -426,14 +426,14 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
               </div>
             )}
             <div>
-              <div className="font-['Plus_Jakarta_Sans'] font-bold text-[17px] text-[#0b1c30] leading-tight flex items-center gap-1.5">
+              <div className="font-display font-bold text-[17px] text-[#0b1c30] leading-tight flex items-center gap-1.5">
                 <span>{selectedPatient.name}</span>
                 <span className="text-[12px] font-normal text-[#45464d]">({selectedPatient.nickname})</span>
               </div>
               <div className="text-[12px] text-[#45464d] flex items-center gap-1.5 mt-0.5">
                 <span className="font-mono text-[#006a61] font-semibold">HN: {selectedPatient.hn}</span>
                 <span>•</span>
-                <span>{selectedPatient.age} yrs</span>
+                <span>{selectedPatient.age} ปี</span>
                 <span>•</span>
                 <span>{selectedPatient.tier}</span>
               </div>
@@ -462,8 +462,8 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
 
           {/* Why Reach Out Now */}
           <div className="space-y-2">
-            <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-              Clinical Outreach Urgency
+            <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+              ทำไมต้องติดต่อตอนนี้
             </span>
             <div className="p-3.5 rounded-xl bg-[#eff4ff]/60 border border-[#c6c6cd]/30 space-y-2.5 text-[12px]">
               {selectedPatient.signals.map((sig, idx) => (
@@ -482,8 +482,8 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
 
           {/* Cycle Decay engine */}
           <div className="space-y-2">
-            <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-              Active Clinical Cycle Decay
+            <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+              รอบ Treatment ปัจจุบัน
             </span>
             <div className="space-y-2">
               {selectedPatient.cycles.map((cyc, idx) => (
@@ -499,7 +499,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                     </span>
                   </div>
                   <div className="text-[11px] text-[#45464d] flex items-center justify-between">
-                    <span>Last: {cyc.lastTreatment} ({cyc.lastDate})</span>
+                    <span>ครั้งล่าสุด: {cyc.lastTreatment} ({cyc.lastDate})</span>
                     <span className="font-semibold text-[#0b1c30]">{cyc.daysDiff}</span>
                   </div>
                 </div>
@@ -511,7 +511,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
           <div className="p-3.5 rounded-xl bg-[#e5eeff] border border-[#006a61]/20 space-y-2">
             <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#006a61] uppercase tracking-wider">
               <span className="material-symbols-outlined text-[16px]">verified</span>
-              Recommended Protocol Offer
+              ข้อเสนอที่แนะนำ
             </div>
             <p className="text-[12px] font-semibold text-[#0b1c30] leading-snug">
               {selectedPatient.recommendedProposal.title}
@@ -529,14 +529,14 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                 className="py-2.5 px-3 rounded-lg bg-[#00b900] hover:bg-[#009b00] text-white text-[12px] font-semibold flex items-center justify-center gap-1.5 transition-transform active:scale-95 shadow-xs"
               >
                 <span className="material-symbols-outlined text-[17px]">chat</span>
-                <span>LINE Concierge</span>
+                <span>ส่ง LINE</span>
               </button>
               <button
                 onClick={() => onOpenOutcome(selectedPatient)}
                 className="py-2.5 px-3 rounded-lg bg-black hover:bg-slate-800 text-white text-[12px] font-semibold flex items-center justify-center gap-1.5 transition-transform active:scale-95 shadow-xs"
               >
                 <span className="material-symbols-outlined text-[17px]">rate_review</span>
-                <span>Log Outcome</span>
+                <span>บันทึกผล</span>
               </button>
             </div>
 
@@ -544,7 +544,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
               onClick={() => onNavigate('patient-detail')}
               className="w-full py-2.5 rounded-lg bg-[#eff4ff] hover:bg-[#dce9ff] text-[#006a61] text-[12px] font-semibold flex items-center justify-center gap-1.5 transition-colors border border-[#c6c6cd]/30"
             >
-              <span>View Full Patient 360° Profile & Clinical Chart</span>
+              <span>ดูโปรไฟล์และประวัติการรักษาทั้งหมด</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           </div>

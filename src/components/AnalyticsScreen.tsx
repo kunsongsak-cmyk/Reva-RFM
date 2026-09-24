@@ -18,44 +18,50 @@ export const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({
 
   const handleDownloadBoardReport = () => {
     const reportText = `=====================================================
-AURA PRESTIGE CLINIC - EXECUTIVE RETENTION & REVENUE REPORT
-Branch: ${selectedBranch} | Period: ${selectedMonth}
-Generated: ${new Date().toLocaleDateString()}
+REVA AESTHETIC CLINIC - รายงานการกลับมาใช้บริการและรายได้
+สาขา: ${selectedBranch} | ช่วงเวลา: ${selectedMonth}
+สร้างเมื่อ: ${new Date().toLocaleDateString('th-TH')}
 =====================================================
 
-1. EXECUTIVE KPI SUMMARY
-- Total Patient Revenue MTD: ฿2,840,000 (+14.2% MoM)
-  * Returning Patients: 62% (฿1,760,000)
-  * New Patients: 38% (฿1,080,000)
-- CRM Attributable Revenue: ฿2,140,000 (75.3% Total Revenue)
-  * Verified CRM Attribution ROI: 18.4x
-- 180-Day Repeat Patient Rate: 48.6% (Benchmark: 45.0%)
-- Active Clinical Pool: 1,482 Patients (42 Recovered MTD)
-- Churn Rate: 4.2% (down from 6.8% prior quarter)
+EXECUTIVE SUMMARY
+- รายได้เดือนนี้ ฿2.84M (+14.2% จากเดือนก่อน) คิดเป็น 88.8% ของเป้า ฿3.20M
+- รายได้ 75.3% มาจากการติดตามคนไข้ผ่าน CRM (ROI 18.4x)
+- อัตรากลับมาใช้บริการภายใน 180 วัน 48.6% สูงกว่าเป้า 45.0%
+- กลุ่ม At Risk มี 286 ราย มูลค่า LTV รวม ฿25.1M ควรเร่งติดตามเป็นอันดับแรก
 
-2. RFM COHORT DISTRIBUTION
-- Champions: 182 Patients (12%) | Avg Spend: ฿185,000
-- Loyal VIPs: 328 Patients (22%) | Avg Spend: ฿94,000
-- Promising Habit: 214 Patients (14%) | Avg Spend: ฿52,000
-- New Patients: 192 Patients (13%) | Avg Spend: ฿31,000
-- Need Attention: 264 Patients (18%) | Avg Spend: ฿44,000
-- At Risk: 286 Patients (19%) | Avg Spend: ฿88,000 | Total At-Risk LTV: ฿25.1M
-- Lost / Inactive: 621 Patients (30%) | Win-Back Protocol Active
+1. ตัวชี้วัดหลัก
+- รายได้รวมเดือนนี้: ฿2,840,000 (+14.2% จากเดือนก่อน)
+  * คนไข้เก่า: 62% (฿1,760,000)
+  * คนไข้ใหม่: 38% (฿1,080,000)
+- รายได้จาก CRM: ฿2,140,000 (75.3% ของรายได้รวม)
+  * ROI จาก CRM: 18.4x
+- อัตรากลับมาใช้บริการภายใน 180 วัน: 48.6% (เป้า 45.0%)
+- คนไข้ที่ยัง Active: 1,482 ราย (ดึงกลับมาได้ 42 รายในเดือนนี้)
+- อัตราการหายไป (Churn): 4.2% (ลดลงจาก 6.8% ในไตรมาสก่อน)
 
-3. SALES CONSULTANT RETENTION LEADERBOARD
-1. Khun May: ฿720,000 Revenue | 86% Contact Rate | 31% Booking Rate | 61 Completed
-2. Khun Ann: ฿650,000 Revenue | 81% Contact Rate | 28% Booking Rate | 58 Completed
-3. Khun Joy: ฿510,000 Revenue | 76% Contact Rate | 24% Booking Rate | 43 Completed
-4. Khun Fah: ฿260,000 Revenue | 72% Contact Rate | 20% Booking Rate | 24 Completed
+2. การกระจายตัวของกลุ่ม RFM
+- Champions: 182 ราย (12%) | ยอดเฉลี่ย ฿185,000
+- Loyal VIPs: 328 ราย (22%) | ยอดเฉลี่ย ฿94,000
+- Promising Habit: 214 ราย (14%) | ยอดเฉลี่ย ฿52,000
+- New Patients: 192 ราย (13%) | ยอดเฉลี่ย ฿31,000
+- Need Attention: 264 ราย (18%) | ยอดเฉลี่ย ฿44,000
+- At Risk: 286 ราย (19%) | ยอดเฉลี่ย ฿88,000 | LTV รวม ฿25.1M
+- Lost / Inactive: 621 ราย (30%) | อยู่ระหว่างแคมเปญดึงกลับ
+
+3. อันดับผลงานที่ปรึกษา
+1. คุณ May: ฿720,000 | ติดต่อได้ 86% | จองนัด 31% | มารับบริการ 61 ราย
+2. คุณ Ann: ฿650,000 | ติดต่อได้ 81% | จองนัด 28% | มารับบริการ 58 ราย
+3. คุณ Joy: ฿510,000 | ติดต่อได้ 76% | จองนัด 24% | มารับบริการ 43 ราย
+4. คุณ Fah: ฿260,000 | ติดต่อได้ 72% | จองนัด 20% | มารับบริการ 24 ราย
 
 =====================================================
-End of Confidential Executive Summary
+เอกสารภายใน - ห้ามเผยแพร่
 `;
-    const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8;' });
+    const blob = new Blob(['\uFEFF' + reportText], { type: 'text/plain;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Aura_Executive_Board_Report_${selectedMonth.replace(' ', '_')}.txt`);
+    link.setAttribute('download', `Reva_Executive_Report_${selectedMonth.replace(' ', '_')}.txt`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -66,11 +72,11 @@ End of Confidential Executive Summary
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-['Plus_Jakarta_Sans'] text-[24px] font-bold text-[#0b1c30] tracking-tight">
-            Executive Retention & Revenue Attribution Dashboard
+          <h1 className="font-display text-[24px] font-bold text-[#0b1c30] tracking-tight">
+            ภาพรวมการกลับมาใช้บริการ & รายได้
           </h1>
-          <p className="font-['Inter'] text-[14px] text-[#45464d] mt-0.5">
-            MTD Performance ({selectedMonth}) vs Target • {selectedBranch}
+          <p className="font-sans text-[14px] text-[#45464d] mt-0.5">
+            ผลงานเดือนนี้ ({selectedMonth}) เทียบเป้า • {selectedBranch}
           </p>
         </div>
 
@@ -80,9 +86,9 @@ End of Confidential Executive Summary
             onChange={e => setSelectedMonth(e.target.value)}
             className="h-10 px-3 rounded-lg bg-white border border-[#c6c6cd]/50 text-[13px] font-semibold text-[#0b1c30] outline-none shadow-xs"
           >
-            <option value="September 2026">September 2026</option>
-            <option value="August 2026">August 2026</option>
-            <option value="July 2026">July 2026</option>
+            <option value="September 2026">กันยายน 2569</option>
+            <option value="August 2026">สิงหาคม 2569</option>
+            <option value="July 2026">กรกฎาคม 2569</option>
           </select>
 
           <button
@@ -90,7 +96,7 @@ End of Confidential Executive Summary
             className="px-3.5 py-2 bg-white border border-[#c6c6cd]/50 hover:bg-[#eff4ff] text-[#006a61] text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
           >
             <span className="material-symbols-outlined text-[18px]">schedule</span>
-            <span>Schedule Weekly Brief</span>
+            <span>ตั้งเวลาสรุปรายสัปดาห์</span>
           </button>
 
           <button
@@ -98,7 +104,7 @@ End of Confidential Executive Summary
             className="px-4 py-2 bg-black hover:bg-slate-800 text-white text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
           >
             <span className="material-symbols-outlined text-[18px]">download</span>
-            <span>Download Board Report</span>
+            <span>ดาวน์โหลดรายงาน</span>
           </button>
         </div>
       </div>
@@ -109,35 +115,35 @@ End of Confidential Executive Summary
         <div className="p-5 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">
-              Total Patient Revenue MTD
+              รายได้รวมเดือนนี้
             </span>
             <span className="text-[12px] font-bold text-[#006a61] bg-[#86f2e4]/30 px-2 py-0.5 rounded">
-              +14.2% MoM
+              +14.2% จากเดือนก่อน
             </span>
           </div>
 
           <div className="mt-3">
-            <div className="font-['Plus_Jakarta_Sans'] text-[28px] font-bold text-[#0b1c30] tracking-tight">
+            <div className="font-display text-[28px] font-bold text-[#0b1c30] tracking-tight">
               ฿2,840,000
             </div>
             <div className="text-[11px] text-[#76777d] mt-0.5">
-              Target: ฿3.20M (88.8% to goal)
+              เป้า: ฿3.20M (ถึงเป้า 88.8%)
             </div>
 
             {/* Split bar */}
             <div className="mt-3">
               <div className="w-full h-2 rounded-full bg-[#eff4ff] flex overflow-hidden">
-                <div className="bg-[#006a61] h-full" style={{ width: '62%' }} title="Returning: 62%"></div>
-                <div className="bg-[#131b2e] h-full" style={{ width: '38%' }} title="New: 38%"></div>
+                <div className="bg-[#006a61] h-full" style={{ width: '62%' }} title="คนไข้เก่า: 62%"></div>
+                <div className="bg-[#131b2e] h-full" style={{ width: '38%' }} title="คนไข้ใหม่: 38%"></div>
               </div>
               <div className="flex items-center justify-between text-[11px] text-[#45464d] mt-1.5 font-medium">
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-[#006a61]"></span>
-                  Returning 62% (฿1.76M)
+                  คนไข้เก่า 62% (฿1.76M)
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-[#131b2e]"></span>
-                  New 38% (฿1.08M)
+                  คนไข้ใหม่ 38% (฿1.08M)
                 </span>
               </div>
             </div>
@@ -148,7 +154,7 @@ End of Confidential Executive Summary
         <div className="p-5 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">
-              CRM Attributable Revenue
+              รายได้จาก CRM
             </span>
             <div className="w-7 h-7 rounded-lg bg-[#eff4ff] flex items-center justify-center text-[#006a61]">
               <span className="material-symbols-outlined text-[17px]">hub</span>
@@ -156,15 +162,15 @@ End of Confidential Executive Summary
           </div>
 
           <div className="mt-3">
-            <div className="font-['Plus_Jakarta_Sans'] text-[28px] font-bold text-[#0b1c30] tracking-tight">
+            <div className="font-display text-[28px] font-bold text-[#0b1c30] tracking-tight">
               ฿2,140,000
             </div>
             <div className="text-[11px] font-semibold text-[#006a61] mt-0.5">
-              75.3% of Total Clinic Revenue
+              75.3% ของรายได้ทั้งคลินิก
             </div>
 
             <div className="mt-3 p-2.5 rounded-lg bg-[#eff4ff] flex items-center justify-between text-[11px]">
-              <span className="text-[#45464d]">Return on CRM Investment:</span>
+              <span className="text-[#45464d]">ผลตอบแทนจาก CRM:</span>
               <strong className="text-[#006a61] font-bold">18.4x ROI</strong>
             </div>
           </div>
@@ -174,19 +180,19 @@ End of Confidential Executive Summary
         <div className="p-5 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">
-              180-Day Repeat Rate
+              กลับมาใช้บริการใน 180 วัน
             </span>
             <span className="text-[12px] font-bold text-[#006a61] bg-[#86f2e4]/30 px-2 py-0.5 rounded">
-              +3.6% vs Target
+              สูงกว่าเป้า 3.6%
             </span>
           </div>
 
           <div className="mt-3">
-            <div className="font-['Plus_Jakarta_Sans'] text-[28px] font-bold text-[#0b1c30] tracking-tight">
+            <div className="font-display text-[28px] font-bold text-[#0b1c30] tracking-tight">
               48.6%
             </div>
             <div className="text-[11px] text-[#76777d] mt-0.5">
-              Clinical target benchmark: 45.0%
+              เป้าหมาย: 45.0%
             </div>
 
             <div className="w-full bg-[#eff4ff] h-2 rounded-full mt-3 overflow-hidden">
@@ -194,7 +200,7 @@ End of Confidential Executive Summary
             </div>
 
             <p className="text-[11px] text-[#45464d] mt-2 leading-tight">
-              Top quartile aesthetic dermatology performance benchmark across Bangkok.
+              อยู่ในกลุ่มผลงานดีที่สุด 25% ของคลินิกความงามในกรุงเทพฯ
             </p>
           </div>
         </div>
@@ -203,7 +209,7 @@ End of Confidential Executive Summary
         <div className="p-5 rounded-xl bg-white border border-[#c6c6cd]/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">
-              Active Clinical Pool
+              คนไข้ที่ยัง Active
             </span>
             <div className="w-7 h-7 rounded-lg bg-[#eff4ff] flex items-center justify-center text-[#006a61]">
               <span className="material-symbols-outlined text-[17px]">group</span>
@@ -211,16 +217,16 @@ End of Confidential Executive Summary
           </div>
 
           <div className="mt-3">
-            <div className="font-['Plus_Jakarta_Sans'] text-[28px] font-bold text-[#0b1c30] tracking-tight">
+            <div className="font-display text-[28px] font-bold text-[#0b1c30] tracking-tight">
               1,482
             </div>
             <div className="text-[11px] font-semibold text-[#006a61] mt-0.5">
-              42 Recovered MTD from At-Risk
+              ดึงกลับจาก At Risk ได้ 42 รายในเดือนนี้
             </div>
 
             <div className="mt-3 p-2.5 rounded-lg bg-[#eff4ff] flex items-center justify-between text-[11px]">
-              <span className="text-[#45464d]">Lapse Churn Rate:</span>
-              <strong className="text-[#ba1a1a] font-bold">4.2% (Down from 6.8%)</strong>
+              <span className="text-[#45464d]">อัตราการหายไป (Churn):</span>
+              <strong className="text-[#ba1a1a] font-bold">4.2% (ลดลงจาก 6.8%)</strong>
             </div>
           </div>
         </div>
@@ -232,18 +238,18 @@ End of Confidential Executive Summary
         <div className="lg:col-span-6 bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
             <div>
-              <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] text-[#0b1c30]">
-                Patient RFM Cohort Distribution & Segment Health
+              <h3 className="font-display font-bold text-[15px] text-[#0b1c30]">
+                การกระจายตัวของกลุ่ม RFM
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                Click any cohort to view filtered patient list
+                คลิกที่กลุ่มเพื่อดูรายชื่อคนไข้
               </p>
             </div>
             <button
               onClick={() => onNavigate('patients')}
               className="text-[12px] font-semibold text-[#006a61] hover:underline"
             >
-              View Full Database →
+              ดูฐานข้อมูลทั้งหมด →
             </button>
           </div>
 
@@ -268,7 +274,7 @@ End of Confidential Executive Summary
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
                     <span className={`w-2.5 h-2.5 rounded-full ${cohort.color}`}></span>
-                    <span className="font-['Plus_Jakarta_Sans'] font-semibold text-[13px] text-[#0b1c30]">
+                    <span className="font-display font-semibold text-[13px] text-[#0b1c30]">
                       {cohort.name}
                     </span>
                     {cohort.highlightBadge && (
@@ -279,7 +285,7 @@ End of Confidential Executive Summary
                   </div>
                   <div className="text-right">
                     <span className="font-mono text-[13px] font-bold text-[#0b1c30]">
-                      {cohort.count.toLocaleString()} Patients
+                      {cohort.count.toLocaleString()} ราย
                     </span>
                     <span className="text-[11px] text-[#76777d] ml-1.5">
                       ({cohort.percent}%)
@@ -288,8 +294,8 @@ End of Confidential Executive Summary
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] text-[#45464d] mt-1">
-                  <span>Average Spend: <strong className="text-[#0b1c30]">{cohort.avgSpend}</strong></span>
-                  <span className="text-[#006a61] font-semibold hover:underline">Drilldown cohort →</span>
+                  <span>ยอดเฉลี่ย: <strong className="text-[#0b1c30]">{cohort.avgSpend}</strong></span>
+                  <span className="text-[#006a61] font-semibold hover:underline">ดูรายชื่อ →</span>
                 </div>
               </div>
             ))}
@@ -300,15 +306,15 @@ End of Confidential Executive Summary
         <div className="lg:col-span-6 bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
             <div>
-              <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] text-[#0b1c30]">
-                Net Patient Movement Matrix
+              <h3 className="font-display font-bold text-[15px] text-[#0b1c30]">
+                การย้ายกลุ่มของคนไข้
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                Cohort Flow Dynamics (Month-to-Date Net Shifts)
+                การเปลี่ยนแปลงสุทธิในเดือนนี้
               </p>
             </div>
             <span className="px-2.5 py-1 rounded bg-[#86f2e4]/30 text-[#006a61] text-[11px] font-bold">
-              Net Growth +79
+              เพิ่มขึ้นสุทธิ +79
             </span>
           </div>
 
@@ -316,73 +322,73 @@ End of Confidential Executive Summary
             <div className="p-3.5 rounded-xl bg-[#eff4ff]/60 border border-[#c6c6cd]/30 flex items-center justify-between">
               <div>
                 <span className="font-semibold text-[13px] text-[#0b1c30] block">
-                  New Intake to Promising Habit
+                  คนไข้ใหม่ → เริ่มกลับมาซ้ำ
                 </span>
                 <span className="text-[11px] text-[#45464d]">
-                  Onboarding completion & 2nd treatment conversion rate: 68%
+                  อัตรากลับมาทำ Treatment ครั้งที่ 2: 68%
                 </span>
               </div>
-              <span className="font-['JetBrains_Mono'] text-[15px] font-bold text-[#006a61]">
-                +42 Patients
+              <span className="font-mono text-[15px] font-bold text-[#006a61]">
+                +42 ราย
               </span>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#ffdad6]/30 border border-[#ba1a1a]/20 flex items-center justify-between">
               <div>
                 <span className="font-semibold text-[13px] text-[#ba1a1a] block">
-                  Champions Lapsing into At-Risk Window
+                  Champions → At Risk
                 </span>
                 <span className="text-[11px] text-[#45464d]">
-                  Triggered by &gt;120d interval elapsed without neurotoxin/lifting recall
+                  ไม่ได้กลับมาทำ Botox/Lifting เกิน 120 วัน
                 </span>
               </div>
-              <span className="font-['JetBrains_Mono'] text-[15px] font-bold text-[#ba1a1a]">
-                -67 Patients
+              <span className="font-mono text-[15px] font-bold text-[#ba1a1a]">
+                -67 ราย
               </span>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#eff4ff]/60 border border-[#c6c6cd]/30 flex items-center justify-between">
               <div>
                 <span className="font-semibold text-[13px] text-[#0b1c30] block">
-                  At-Risk Recovered via Precision Recall
+                  At Risk → ดึงกลับมาได้
                 </span>
                 <span className="text-[11px] text-[#45464d]">
-                  Re-booked into active cycle within 14 days of warning signal
+                  จองนัดใหม่ภายใน 14 วันหลังได้รับการแจ้งเตือน
                 </span>
               </div>
-              <span className="font-['JetBrains_Mono'] text-[15px] font-bold text-[#006a61]">
-                +18 Patients
+              <span className="font-mono text-[15px] font-bold text-[#006a61]">
+                +18 ราย
               </span>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#eff4ff]/60 border border-[#c6c6cd]/30 flex items-center justify-between">
               <div>
                 <span className="font-semibold text-[13px] text-[#0b1c30] block">
-                  Inactive Win-Backs (Lapsed &gt;180 Days)
+                  ดึงกลับคนไข้ที่หายไปเกิน 180 วัน
                 </span>
                 <span className="text-[11px] text-[#45464d]">
-                  Re-activated via personalized VIP concierge LINE campaign
+                  กลับมาจากแคมเปญ LINE เฉพาะบุคคล
                 </span>
               </div>
-              <span className="font-['JetBrains_Mono'] text-[15px] font-bold text-[#006a61]">
-                +86 Patients
+              <span className="font-mono text-[15px] font-bold text-[#006a61]">
+                +86 ราย
               </span>
             </div>
 
             <div className="p-4 rounded-xl bg-[#131b2e] text-white flex items-center justify-between shadow-xs">
               <div>
                 <span className="font-bold text-[14px] block">
-                  Net Active Patient Expansion Rate
+                  อัตราการเติบโตของคนไข้ Active สุทธิ
                 </span>
                 <span className="text-[11px] text-[#bec6e0]">
-                  Thonglor Flagship Active Retained Capacity
+                  {selectedBranch}
                 </span>
               </div>
               <div className="text-right">
-                <span className="font-['JetBrains_Mono'] text-[18px] font-bold text-[#86f2e4]">
-                  +5.6% MoM
+                <span className="font-mono text-[18px] font-bold text-[#86f2e4]">
+                  +5.6% จากเดือนก่อน
                 </span>
-                <span className="block text-[11px] text-[#bec6e0]">+79 Net Patients</span>
+                <span className="block text-[11px] text-[#bec6e0]">สุทธิ +79 ราย</span>
               </div>
             </div>
           </div>
@@ -395,15 +401,15 @@ End of Confidential Executive Summary
         <div className="lg:col-span-6 bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
             <div>
-              <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] text-[#0b1c30]">
-                End-to-End Retention Sales Funnel
+              <h3 className="font-display font-bold text-[15px] text-[#0b1c30]">
+                Funnel การติดตามคนไข้
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                From Clinical Recall Trigger to Completed Cash Inflow
+                ตั้งแต่ถึงรอบนัด จนถึงมารับบริการและชำระเงิน
               </p>
             </div>
             <span className="text-[12px] font-mono font-bold text-[#006a61]">
-              ฿2.14M Completed
+              ปิดการขาย ฿2.14M
             </span>
           </div>
 
@@ -442,8 +448,8 @@ End of Confidential Executive Summary
           </div>
 
           <div className="p-3 rounded-lg bg-[#eff4ff] text-[11px] text-[#45464d] flex items-center justify-between mt-2">
-            <span>Overall Recall Conversion Efficiency:</span>
-            <strong className="text-[#006a61] text-[12px]">13.1% (1,420 → 186 Visits)</strong>
+            <span>อัตราแปลงผลรวม:</span>
+            <strong className="text-[#006a61] text-[12px]">13.1% (1,420 → 186 ครั้ง)</strong>
           </div>
         </div>
 
@@ -451,15 +457,15 @@ End of Confidential Executive Summary
         <div className="lg:col-span-6 bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
             <div>
-              <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] text-[#0b1c30]">
-                Sales Consultant Retention Leaderboard
+              <h3 className="font-display font-bold text-[15px] text-[#0b1c30]">
+                อันดับผลงานที่ปรึกษา
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                Ranked by CRM Recall Attributed Revenue (MTD)
+                เรียงตามรายได้จากการติดตามคนไข้ (เดือนนี้)
               </p>
             </div>
             <span className="px-2 py-0.5 rounded bg-[#eff4ff] text-[#006a61] text-[11px] font-bold">
-              4 Active Consultants
+              ที่ปรึกษา 4 คน
             </span>
           </div>
 
@@ -481,27 +487,27 @@ End of Confidential Executive Summary
                       #{c.rank}
                     </div>
                     <div>
-                      <div className="font-['Plus_Jakarta_Sans'] font-semibold text-[13px] text-[#0b1c30] flex items-center gap-1.5 leading-snug">
+                      <div className="font-display font-semibold text-[13px] text-[#0b1c30] flex items-center gap-1.5 leading-snug">
                         <span>{c.name}</span>
                         <span className="text-[11px] font-normal text-[#45464d]">({c.role})</span>
                         {c.isTop && (
                           <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#006a61] text-white">
-                            TOP PERFORMER
+                            อันดับ 1
                           </span>
                         )}
                       </div>
                       <div className="text-[11px] text-[#45464d] mt-0.5">
-                        {c.assigned} Assigned · Contact Rate: {c.contactRatePercent}% · Booking: {c.bookingRatePercent}%
+                        ดูแล {c.assigned} ราย · ติดต่อได้ {c.contactRatePercent}% · จองนัด {c.bookingRatePercent}%
                       </div>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <span className="font-['Plus_Jakarta_Sans'] font-bold text-[14px] text-[#0b1c30] block">
+                    <span className="font-display font-bold text-[14px] text-[#0b1c30] block">
                       ฿{(c.revenueGenerated).toLocaleString()}
                     </span>
                     <span className="text-[11px] text-[#006a61] font-semibold">
-                      {c.completedCount} Completed Visits
+                      มารับบริการ {c.completedCount} ราย
                     </span>
                   </div>
                 </div>
@@ -514,7 +520,7 @@ End of Confidential Executive Summary
               onClick={() => onNavigate('todays-queue')}
               className="text-[12px] font-semibold text-[#006a61] hover:underline"
             >
-              Open Consultant Outreach Queue →
+              เปิดคิวติดตามคนไข้ →
             </button>
           </div>
         </div>

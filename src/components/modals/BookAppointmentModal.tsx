@@ -33,7 +33,7 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
   const times = [
     '10:30 - 12:00',
     '13:00 - 14:30',
-    '14:00 - 15:30 (Preferred by Khun A)',
+    '14:00 - 15:30',
     '16:00 - 17:30',
     '18:00 - 19:30'
   ];
@@ -58,11 +58,11 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
               <span className="material-symbols-outlined text-[20px]">event_available</span>
             </div>
             <div>
-              <h3 className="font-['Plus_Jakarta_Sans'] font-semibold text-[16px] text-[#0b1c30]">
-                Book VIP Procedure
+              <h3 className="font-display font-semibold text-[16px] text-[#0b1c30]">
+                จองนัดหัตถการ
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                For {patient.name} ({patient.nickname}) • HN: {patient.hn}
+                คนไข้: {patient.name} ({patient.nickname}) • HN: {patient.hn}
               </p>
             </div>
           </div>
@@ -78,7 +78,7 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
             <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-              Clinical Procedure / Recall Package
+              หัตถการ / แพ็กเกจ
             </label>
             <select
               value={selectedProcedure}
@@ -93,7 +93,7 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
 
           <div>
             <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-              Attending Specialist Doctor
+              แพทย์ผู้ทำหัตถการ
             </label>
             <select
               value={selectedDoctor}
@@ -109,7 +109,7 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Appointment Date
+                วันที่นัด
               </label>
               <input
                 type="date"
@@ -120,7 +120,7 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
             </div>
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Time Window
+                ช่วงเวลา
               </label>
               <select
                 value={selectedTime}
@@ -137,7 +137,7 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
           <div className="p-3 rounded-xl bg-[#e5eeff] text-[#0b1c30] text-[12px] flex items-start gap-2">
             <span className="material-symbols-outlined text-[16px] text-[#006a61] shrink-0 mt-0.5">verified_user</span>
             <span>
-              Booking reserves <strong>Thonglor Treatment Suite 2</strong> and locks clinical laser equipment slot.
+              การจองจะล็อกห้องหัตถการและเครื่องมือในช่วงเวลาที่เลือก
             </span>
           </div>
 
@@ -147,14 +147,14 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 text-[13px] rounded-lg text-[#45464d] hover:bg-slate-100"
             >
-              Cancel
+              ยกเลิก
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-black hover:bg-slate-800 text-white font-semibold text-[13px] rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
             >
               <span className="material-symbols-outlined text-[16px]">check_circle</span>
-              <span>Confirm Reservation</span>
+              <span>ยืนยันการจอง</span>
             </button>
           </div>
         </form>

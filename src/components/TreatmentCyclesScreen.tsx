@@ -17,9 +17,9 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
       id: 'lifting',
       name: 'Monopolar RF & High-Intensity Ultrasound (Lifting)',
       protocols: ['Program Oligio X (600 Shots)', 'Ulthera SPT (800 Lines)', 'Ultraformer MPT (400 Shots)'],
-      halfLifeMonths: '6 – 12 Months',
-      decayDescription: 'Collagen remodeling peaks at 90 days; gradual elastin relaxation begins at 180 days.',
-      optimalWindow: 'Month 6 – Month 8',
+      halfLifeMonths: '6 – 12 เดือน',
+      decayDescription: 'การสร้างคอลลาเจนใหม่สูงสุดที่ 90 วัน และผิวเริ่มกลับมาหย่อนคล้อยทีละน้อยหลัง 180 วัน',
+      optimalWindow: 'เดือนที่ 6 – 8',
       activePatients: 412,
       dueThisMonth: 38,
       overdueCount: 19,
@@ -29,9 +29,9 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
       id: 'neurotoxin',
       name: 'Neurotoxin / Neuromodulator (Botox)',
       protocols: ['Botox Allergan 100u / 50u', 'Dysport Precision Aesthetic'],
-      halfLifeMonths: '3 – 4 Months',
-      decayDescription: 'Synaptic terminal axonal sprouting restores neuromuscular junction transmission by 120 days.',
-      optimalWindow: 'Day 90 – Day 110',
+      halfLifeMonths: '3 – 4 เดือน',
+      decayDescription: 'ปลายประสาทแตกแขนงใหม่ (axonal sprouting) ทำให้การสั่งงานกล้ามเนื้อกลับมาเป็นปกติภายในประมาณ 120 วัน',
+      optimalWindow: 'วันที่ 90 – 110',
       activePatients: 624,
       dueThisMonth: 84,
       overdueCount: 42,
@@ -41,9 +41,9 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
       id: 'skin-booster',
       name: 'Polynucleotide (PN) & Hyaluronic Acid Skin Boosters',
       protocols: ['Rejuran Healer (2cc)', 'Belotero Revive Hydration', 'Juvelook Collagen Stimulator'],
-      halfLifeMonths: '1 – 3 Months',
-      decayDescription: 'ECM extracellular fibroblast activation requires periodic micro-depot replenishment.',
-      optimalWindow: 'Day 28 – Day 45 (Induction) / Day 90 (Maintenance)',
+      halfLifeMonths: '1 – 3 เดือน',
+      decayDescription: 'การกระตุ้น fibroblast และ ECM ต้องทำต่อเนื่องเป็นระยะเพื่อคงผลลัพธ์',
+      optimalWindow: 'วันที่ 28 – 45 (ช่วงเริ่มต้น) / วันที่ 90 (ช่วงคงผล)',
       activePatients: 380,
       dueThisMonth: 61,
       overdueCount: 28,
@@ -53,9 +53,9 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
       id: 'picosecond-laser',
       name: 'Picosecond Laser & Photothermal Brightening',
       protocols: ['Program Pico Discovery (Melasma & Tone)', 'Dual Yellow Vascular Tone'],
-      halfLifeMonths: '4 – 6 Weeks',
-      decayDescription: 'Epidermal turnover cycle of 28 days necessitates cumulative pigment shatter passes.',
-      optimalWindow: 'Day 28 – Day 35',
+      halfLifeMonths: '4 – 6 สัปดาห์',
+      decayDescription: 'ผิวชั้นนอกผลัดเซลล์ทุก 28 วัน จึงต้องทำต่อเนื่องหลายครั้งเพื่อสลายเม็ดสีสะสม',
+      optimalWindow: 'วันที่ 28 – 35',
       activePatients: 290,
       dueThisMonth: 45,
       overdueCount: 14,
@@ -68,11 +68,11 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-['Plus_Jakarta_Sans'] text-[24px] font-bold text-[#0b1c30] tracking-tight">
-            Clinical Treatment Cycles Engine
+          <h1 className="font-display text-[24px] font-bold text-[#0b1c30] tracking-tight">
+            รอบ Treatment
           </h1>
-          <p className="font-['Inter'] text-[14px] text-[#45464d] mt-0.5">
-            Predictive Tissue Remodeling & Efficacy Half-Life Recall Algorithms
+          <p className="font-sans text-[14px] text-[#45464d] mt-0.5">
+            คำนวณรอบนัดจากระยะเวลาที่ผลการรักษาแต่ละประเภทคงอยู่
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
           className="px-4 py-2 bg-black hover:bg-slate-800 text-white text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
         >
           <span className="material-symbols-outlined text-[18px]">view_timeline</span>
-          <span>View Active Priority Queue (18)</span>
+          <span>ดูคิวติดตามวันนี้ (18)</span>
         </button>
       </div>
 
@@ -94,15 +94,15 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
           >
             <div className="flex items-start justify-between gap-3 pb-3 border-b border-[#c6c6cd]/30">
               <div>
-                <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[16px] text-[#0b1c30]">
+                <h3 className="font-display font-bold text-[16px] text-[#0b1c30]">
                   {m.name}
                 </h3>
                 <span className="text-[12px] font-semibold text-[#006a61]">
-                  Clinical Recall Half-Life: {m.halfLifeMonths}
+                  ผลการรักษาคงอยู่: {m.halfLifeMonths}
                 </span>
               </div>
               <span className="px-2.5 py-1 rounded bg-[#eff4ff] text-[#0b1c30] text-[11px] font-bold shrink-0">
-                {m.activePatients} Active
+                Active {m.activePatients} ราย
               </span>
             </div>
 
@@ -112,29 +112,29 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
 
             <div className="p-3 rounded-lg bg-[#eff4ff]/60 border border-[#c6c6cd]/30 space-y-1.5 text-[12px]">
               <div className="flex justify-between">
-                <span className="text-[#45464d]">Target Maintenance Window:</span>
+                <span className="text-[#45464d]">ช่วงเวลาที่ควรทำซ้ำ:</span>
                 <strong className="text-[#0b1c30]">{m.optimalWindow}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#45464d]">Due This Calendar Month:</span>
-                <strong className="text-[#006a61]">{m.dueThisMonth} Patients</strong>
+                <span className="text-[#45464d]">ถึงรอบเดือนนี้:</span>
+                <strong className="text-[#006a61]">{m.dueThisMonth} ราย</strong>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#45464d]">Overdue Beyond Physiological Window:</span>
-                <strong className="text-[#ba1a1a]">{m.overdueCount} Patients ({m.atRiskRevenue} LTV)</strong>
+                <span className="text-[#45464d]">เลยรอบแล้ว:</span>
+                <strong className="text-[#ba1a1a]">{m.overdueCount} ราย (LTV {m.atRiskRevenue})</strong>
               </div>
             </div>
 
             <div className="pt-1 flex items-center justify-between">
               <span className="text-[11px] text-[#76777d]">
-                Supported protocols: {m.protocols.length}
+                จำนวนโปรแกรม: {m.protocols.length}
               </span>
               <button
-                onClick={() => onOpenBroadcast(`${m.name} Recall`, m.overdueCount)}
+                onClick={() => onOpenBroadcast(`ติดตามรอบ ${m.name}`, m.overdueCount)}
                 className="px-3 py-1.5 rounded-lg bg-[#eff4ff] hover:bg-[#dce9ff] text-[#006a61] text-[12px] font-semibold flex items-center gap-1 transition-colors border border-[#86f2e4]/40"
               >
                 <span className="material-symbols-outlined text-[16px]">campaign</span>
-                <span>Dispatch Cycle Recall ({m.overdueCount})</span>
+                <span>ส่งข้อความติดตาม ({m.overdueCount})</span>
               </button>
             </div>
           </div>

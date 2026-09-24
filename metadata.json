@@ -1,7 +1,8 @@
 {
-  "name": "Aura Prestige Clinic CRM",
-  "description": "Autonomous clinical retention intelligence, RFM patient lifetime value tracking, and treatment cycle recall CRM for luxury aesthetic dermatology.",
+  "name": "Reva Aesthetic CRM",
+  "description": "ระบบ CRM ติดตามคนไข้และวิเคราะห์ RFM ของ Reva Aesthetic Clinic Bangkok",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
-

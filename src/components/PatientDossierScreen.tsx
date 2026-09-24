@@ -24,8 +24,8 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
 
   // Form states for Live Action Outcome Logger
   const [channel, setChannel] = useState<'line' | 'phone' | 'whatsapp' | 'walkin'>('line');
-  const [outcomeOption, setOutcomeOption] = useState('Interested in Oligio X');
-  const [formNotes, setFormNotes] = useState('Khun Ananya mentioned schedule opening next Thursday. Send Oligio X recall flyer with afternoon tea reservation voucher...');
+  const [outcomeOption, setOutcomeOption] = useState('สนใจ ทำ Treatment ต่อ');
+  const [formNotes, setFormNotes] = useState('');
   const [nextDate, setNextDate] = useState('2026-09-28');
   const [nextTime, setNextTime] = useState('13:00 - 15:00 (Preferred)');
   const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
@@ -39,12 +39,12 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
     e.preventDefault();
     const newTimelineEvent: TimelineEvent = {
       id: `ev-${Date.now()}`,
-      title: `${outcomeOption} via ${channel.toUpperCase()}`,
-      timestamp: 'Today, Just now',
+      title: `${outcomeOption} ผ่าน ${channel.toUpperCase()}`,
+      timestamp: 'วันนี้ เมื่อสักครู่',
       icon: channel === 'line' ? 'chat' : channel === 'phone' ? 'call' : 'check_circle',
       iconBg: 'bg-[#006a61] text-white',
       description: formNotes,
-      statusTag: 'Logged by Khun May'
+      statusTag: 'บันทึกโดย คุณ May'
     };
 
     const updatedPatient: Patient = {
@@ -67,22 +67,22 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
             className="hover:text-[#006a61] flex items-center gap-1 font-medium transition-colors"
           >
             <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-            <span>Clinical Operations</span>
+            <span>งานประจำวัน</span>
           </button>
           <span>/</span>
           <span className="hover:text-[#006a61] cursor-pointer" onClick={onBackToQueue}>
-            Today's Queue
+            คิวติดตามวันนี้
           </span>
           <span>/</span>
           <span className="font-semibold text-[#0b1c30]">
-            Dossier • {patient.name}
+            โปรไฟล์ • {patient.name}
           </span>
         </div>
 
         {saveSuccessNotice && (
           <div className="px-3 py-1.5 rounded-lg bg-[#86f2e4]/30 border border-[#006a61]/30 text-[#006a61] text-[12px] font-semibold flex items-center gap-1.5 animate-in fade-in">
             <span className="material-symbols-outlined text-[16px]">check_circle</span>
-            <span>Outcome recorded and timeline synchronized.</span>
+            <span>บันทึกผลการติดต่อเรียบร้อยแล้ว</span>
           </div>
         )}
       </div>
@@ -107,7 +107,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
 
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="font-['Plus_Jakarta_Sans'] text-[22px] sm:text-[24px] font-bold text-[#0b1c30] leading-none">
+                <h1 className="font-display text-[22px] sm:text-[24px] font-bold text-[#0b1c30] leading-none">
                   {patient.name} <span className="text-[16px] font-normal text-[#45464d]">({patient.nickname})</span>
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#ffdad6] text-[#ba1a1a]">
@@ -118,7 +118,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               <div className="flex flex-wrap items-center gap-2 text-[12px] text-[#45464d]">
                 <span className="font-mono text-[#006a61] font-semibold">HN: {patient.hn}</span>
                 <span>•</span>
-                <span>Age: {patient.age}</span>
+                <span>อายุ {patient.age} ปี</span>
                 <span>•</span>
                 <span>{patient.nationality}</span>
                 <span>•</span>
@@ -133,15 +133,15 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               {/* Assignment Tags */}
               <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
                 <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
-                  <span className="text-[#76777d]">Sales Owner:</span>
+                  <span className="text-[#76777d]">ผู้ดูแลการขาย:</span>
                   <strong>{patient.salesOwner}</strong> ({patient.salesOwnerRole})
                 </span>
                 <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
-                  <span className="text-[#76777d]">Doctor:</span>
+                  <span className="text-[#76777d]">แพทย์:</span>
                   <strong>{patient.attendingDoctor}</strong> ({patient.doctorSpecialty})
                 </span>
                 <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
-                  <span className="text-[#76777d]">Branch:</span>
+                  <span className="text-[#76777d]">สาขา:</span>
                   <strong>{patient.branch}</strong>
                 </span>
               </div>
@@ -153,14 +153,14 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
             <div className="text-left sm:text-right">
               <div className="flex items-center gap-2 justify-start sm:justify-end">
                 <span className="text-[11px] font-semibold text-[#76777d] uppercase tracking-wider">
-                  Priority Score
+                  คะแนนความเร่งด่วน
                 </span>
-                <span className="font-['JetBrains_Mono'] text-[24px] font-bold text-[#ba1a1a]">
+                <span className="font-mono text-[24px] font-bold text-[#ba1a1a]">
                   {patient.priorityScore} <span className="text-[14px] text-[#76777d] font-normal">/ 100</span>
                 </span>
               </div>
               <span className="text-[11px] font-bold text-[#ba1a1a] uppercase tracking-wider block">
-                {patient.priorityLevel} Priority • Immediate Outreach
+                {patient.priorityLevel} • ควรติดต่อทันที
               </span>
             </div>
 
@@ -170,7 +170,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 className="px-3.5 py-2 rounded-lg bg-[#00b900] hover:bg-[#009b00] text-white text-[12px] font-semibold flex items-center gap-1.5 transition-transform active:scale-95 shadow-xs"
               >
                 <span className="material-symbols-outlined text-[17px]">chat</span>
-                <span>LINE OA Chat</span>
+                <span>แชท LINE OA</span>
               </button>
 
               <a
@@ -178,7 +178,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 className="px-3.5 py-2 rounded-lg bg-[#eff4ff] hover:bg-[#dce9ff] text-[#006a61] text-[12px] font-semibold flex items-center gap-1.5 transition-colors border border-[#c6c6cd]/30"
               >
                 <span className="material-symbols-outlined text-[17px]">call</span>
-                <span>Call Client</span>
+                <span>โทรหาคนไข้</span>
               </a>
 
               <button
@@ -186,7 +186,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 className="px-3.5 py-2 rounded-lg bg-white hover:bg-[#eff4ff] text-[#0b1c30] text-[12px] font-semibold flex items-center gap-1.5 transition-colors border border-[#c6c6cd]/50 shadow-xs"
               >
                 <span className="material-symbols-outlined text-[17px] text-[#006a61]">calendar_today</span>
-                <span>Book Appointment</span>
+                <span>จองนัด</span>
               </button>
 
               <button
@@ -194,7 +194,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 className="px-3.5 py-2 rounded-lg bg-black hover:bg-slate-800 text-white text-[12px] font-semibold flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
               >
                 <span className="material-symbols-outlined text-[17px]">rate_review</span>
-                <span>Record Outcome</span>
+                <span>บันทึกผล</span>
               </button>
             </div>
           </div>
@@ -208,70 +208,70 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
           {/* Card 1: Patient Financial & RFM Value */}
           <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
-              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-                Patient Value & RFM Intelligence
+              <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                มูลค่าคนไข้ & RFM
               </span>
               <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#eff4ff] text-[#006a61] border border-[#86f2e4]/30">
-                {patient.tier} Tier
+                ระดับ {patient.tier}
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-lg bg-[#eff4ff]/60 border border-[#c6c6cd]/30">
-                <span className="text-[11px] text-[#45464d] block">Lifetime Value (LTV)</span>
-                <span className="font-['Plus_Jakarta_Sans'] text-[18px] font-bold text-[#0b1c30]">
+                <span className="text-[11px] text-[#45464d] block">ยอดสะสม (LTV)</span>
+                <span className="font-display text-[18px] font-bold text-[#0b1c30]">
                   ฿{(patient.lifetimeValue).toLocaleString()}
                 </span>
               </div>
               <div className="p-3 rounded-lg bg-[#eff4ff]/60 border border-[#c6c6cd]/30">
-                <span className="text-[11px] text-[#45464d] block">Trailing 12M Spend</span>
-                <span className="font-['Plus_Jakarta_Sans'] text-[18px] font-bold text-[#0b1c30]">
+                <span className="text-[11px] text-[#45464d] block">ยอดใช้จ่าย 12 เดือน</span>
+                <span className="font-display text-[18px] font-bold text-[#0b1c30]">
                   ฿{(patient.trailing12M).toLocaleString()}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center justify-between text-[12px] pt-1 border-t border-[#c6c6cd]/25">
-              <span className="text-[#45464d]">Average Ticket Size</span>
+              <span className="text-[#45464d]">ยอดเฉลี่ยต่อครั้ง</span>
               <span className="font-semibold text-[#0b1c30]">฿{(patient.avgTicket).toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-[#45464d]">Completed Clinical Visits</span>
-              <span className="font-semibold text-[#0b1c30]">{patient.completedVisits} visits</span>
+              <span className="text-[#45464d]">จำนวนครั้งที่มารับบริการ</span>
+              <span className="font-semibold text-[#0b1c30]">{patient.completedVisits} ครั้ง</span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-[#45464d]">Last Visit Recency</span>
-              <span className="font-semibold text-[#ba1a1a]">{patient.lastVisitRecencyDays}d ago ({patient.lastVisitDate})</span>
+              <span className="text-[#45464d]">มาครั้งล่าสุด</span>
+              <span className="font-semibold text-[#ba1a1a]">{patient.lastVisitRecencyDays} วันก่อน ({patient.lastVisitDate})</span>
             </div>
 
             {/* RFM Score Detail Matrix */}
             <div className="p-3.5 rounded-xl bg-[#eff4ff]/80 border border-[#c6c6cd]/30 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-[#0b1c30] uppercase tracking-wider">
-                  RFM Sub-Index Breakdown
+                  รายละเอียดคะแนน RFM
                 </span>
                 <span className="font-mono text-[11px] font-bold text-[#006a61]">
-                  Score: {patient.rfmScore.recencyScore} · {patient.rfmScore.frequencyScore} · {patient.rfmScore.monetaryScore}
+                  คะแนน: {patient.rfmScore.recencyScore} · {patient.rfmScore.frequencyScore} · {patient.rfmScore.monetaryScore}
                 </span>
               </div>
 
               <div className="space-y-1.5 text-[11px] text-[#45464d]">
                 <div className="flex items-start gap-1.5">
-                  <strong className="text-[#ba1a1a] shrink-0">Recency (2/5):</strong>
+                  <strong className="text-[#ba1a1a] shrink-0">Recency ({patient.rfmScore.recencyScore}/5):</strong>
                   <span>{patient.rfmScore.recencyLabel}</span>
                 </div>
                 <div className="flex items-start gap-1.5">
-                  <strong className="text-[#006a61] shrink-0">Frequency (5/5):</strong>
+                  <strong className="text-[#006a61] shrink-0">Frequency ({patient.rfmScore.frequencyScore}/5):</strong>
                   <span>{patient.rfmScore.frequencyLabel}</span>
                 </div>
                 <div className="flex items-start gap-1.5">
-                  <strong className="text-[#0b1c30] shrink-0">Monetary (4/5):</strong>
+                  <strong className="text-[#0b1c30] shrink-0">Monetary ({patient.rfmScore.monetaryScore}/5):</strong>
                   <span>{patient.rfmScore.monetaryLabel}</span>
                 </div>
               </div>
 
               <div className="p-2 rounded bg-white text-[11px] text-[#0b1c30] border border-[#c6c6cd]/30 leading-snug">
-                <strong className="text-[#006a61]">Matrix Verdict:</strong> {patient.rfmScore.matrixVerdit}
+                <strong className="text-[#006a61]">สรุป:</strong> {patient.rfmScore.matrixVerdit}
               </div>
             </div>
           </div>
@@ -280,20 +280,22 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
           <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
             <div className="flex items-center gap-2 pb-2 border-b border-[#c6c6cd]/30">
               <span className="material-symbols-outlined text-[20px] text-[#ba1a1a]">warning</span>
-              <span className="font-['Inter'] text-[12px] font-bold uppercase tracking-wider text-[#0b1c30]">
-                Why Follow Up Today?
+              <span className="font-sans text-[12px] font-bold uppercase tracking-wider text-[#0b1c30]">
+                ทำไมต้องติดตามวันนี้?
               </span>
             </div>
 
             <div className="space-y-3 text-[12px]">
-              <div className="p-3 rounded-lg bg-[#ffdad6]/40 border border-[#ba1a1a]/20">
-                <span className="font-bold text-[#ba1a1a] block mb-0.5">
-                  Lifting Procedure Overdue by 37 Days
-                </span>
-                <p className="text-[#45464d] text-[11px] leading-snug">
-                  Target milestone was 15 August 2026. Clinical ultrasound data indicates collagen remodeling phase has completed; skin laxity rebound is beginning.
-                </p>
-              </div>
+              {patient.cycles.filter(c => c.isOverdue).map((cyc, idx) => (
+                <div key={idx} className="p-3 rounded-lg bg-[#ffdad6]/40 border border-[#ba1a1a]/20">
+                  <span className="font-bold text-[#ba1a1a] block mb-0.5">
+                    {cyc.protocolName} เลยรอบนัด ({cyc.daysDiff})
+                  </span>
+                  <p className="text-[#45464d] text-[11px] leading-snug">
+                    ครั้งล่าสุด {cyc.lastTreatment} ({cyc.lastDate}) • ควรกลับมาทำภายใน {cyc.targetDate}
+                  </p>
+                </div>
+              ))}
 
               {patient.signals.map((sig, idx) => (
                 <div key={idx} className="flex items-start gap-2.5">
@@ -313,7 +315,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#006a61] flex items-center gap-1">
                   <span className="material-symbols-outlined text-[16px]">verified</span>
-                  Recommended Clinical Proposal
+                  ข้อเสนอที่แนะนำ
                 </span>
               </div>
               <p className="text-[12px] font-semibold text-[#0b1c30] leading-snug">
@@ -334,7 +336,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 <span className="material-symbols-outlined text-[14px]">
                   {offerAttached ? 'check' : 'local_offer'}
                 </span>
-                <span>{offerAttached ? 'Offer Attached to Concierge Message' : 'Attach Offer to Direct Message'}</span>
+                <span>{offerAttached ? 'แนบข้อเสนอในข้อความแล้ว' : 'แนบข้อเสนอในข้อความ'}</span>
               </button>
             </div>
           </div>
@@ -345,17 +347,17 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
           {/* Card: Treatment Cycle Status Engine */}
           <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
-              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-                Treatment Cycle Status Engine
+              <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                สถานะรอบ Treatment
               </span>
-              <span className="text-[11px] text-[#76777d]">Based on Clinical Efficacy Half-Life</span>
+              <span className="text-[11px] text-[#76777d]">คำนวณจากระยะเวลาที่ผลการรักษาคงอยู่</span>
             </div>
 
             <div className="space-y-3">
               {patient.cycles.map((cyc, idx) => (
                 <div key={idx} className="p-3.5 rounded-xl bg-[#eff4ff]/50 border border-[#c6c6cd]/30 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-['Plus_Jakarta_Sans'] font-semibold text-[13px] text-[#0b1c30]">
+                    <span className="font-display font-semibold text-[13px] text-[#0b1c30]">
                       {cyc.protocolName}
                     </span>
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -371,12 +373,12 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
 
                   <div className="grid grid-cols-2 gap-2 text-[11px] text-[#45464d]">
                     <div>
-                      <span>Last: </span>
+                      <span>ครั้งล่าสุด: </span>
                       <strong className="text-[#0b1c30]">{cyc.lastTreatment}</strong>
-                      <span className="block text-[10px] text-[#76777d]">Date: {cyc.lastDate}</span>
+                      <span className="block text-[10px] text-[#76777d]">วันที่: {cyc.lastDate}</span>
                     </div>
                     <div className="text-right">
-                      <span>Target Window: </span>
+                      <span>ควรทำครั้งถัดไป: </span>
                       <strong className="text-[#0b1c30]">{cyc.targetDate}</strong>
                       <span className="block font-semibold text-[#ba1a1a]">{cyc.daysDiff}</span>
                     </div>
@@ -399,15 +401,15 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
           {/* Card: Clinical Treatment Journey */}
           <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#c6c6cd]/30">
-              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-                Clinical Treatment Journey (7 Procedures)
+              <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                ประวัติการรักษา ({patient.treatments.length} รายการ)
               </span>
 
               <button
                 onClick={() => setExpandChartNotes(!expandChartNotes)}
                 className="text-[11px] text-[#006a61] font-semibold hover:underline flex items-center gap-1"
               >
-                <span>{expandChartNotes ? 'Collapse Notes' : 'Expand Chart Notes'}</span>
+                <span>{expandChartNotes ? 'ซ่อนบันทึก' : 'แสดงบันทึกแพทย์'}</span>
                 <span className="material-symbols-outlined text-[14px]">
                   {expandChartNotes ? 'expand_less' : 'expand_more'}
                 </span>
@@ -426,7 +428,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                       : 'bg-[#eff4ff] text-[#45464d] hover:text-[#0b1c30]'
                   }`}
                 >
-                  {cat} {cat === 'All' ? '(7)' : cat === 'Lifting' ? '(3)' : cat === 'Injectables' ? '(3)' : '(1)'}
+                  {cat === 'All' ? 'ทั้งหมด' : cat} ({cat === 'All' ? patient.treatments.length : patient.treatments.filter(t => t.category === cat).length})
                 </button>
               ))}
             </div>
@@ -440,7 +442,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h4 className="font-['Plus_Jakarta_Sans'] font-semibold text-[13px] text-[#0b1c30]">
+                      <h4 className="font-display font-semibold text-[13px] text-[#0b1c30]">
                         {t.name}
                       </h4>
                       <div className="flex items-center gap-2 text-[11px] text-[#45464d] mt-0.5">
@@ -472,13 +474,13 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                       {t.review && (
                         <div className="flex items-center gap-1.5 text-[#006a61]">
                           <span className="material-symbols-outlined text-[14px]">star</span>
-                          <span className="font-semibold">{t.review.stars}.0 Patient Review:</span>
+                          <span className="font-semibold">{t.review.stars}.0 รีวิวจากคนไข้:</span>
                           <span className="text-[#45464d] italic">"{t.review.text}"</span>
                         </div>
                       )}
                       {t.notes && (
                         <div className="text-[#0b1c30]">
-                          <span className="text-[#76777d]">Doctor Note: </span>
+                          <span className="text-[#76777d]">บันทึกแพทย์: </span>
                           {t.notes}
                         </div>
                       )}
@@ -495,11 +497,11 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
           {/* Card: Log Follow-up Outcome (Live Action) */}
           <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
-              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-                Log Follow-up Outcome
+              <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                บันทึกผลการติดตาม
               </span>
               <span className="px-2 py-0.5 rounded bg-black text-white text-[10px] font-semibold">
-                Live Action
+                บันทึกทันที
               </span>
             </div>
 
@@ -507,7 +509,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               {/* Channel */}
               <div>
                 <label className="block text-[11px] font-semibold text-[#0b1c30] mb-1">
-                  Channel
+                  ช่องทาง
                 </label>
                 <div className="grid grid-cols-4 gap-1 p-1 bg-[#eff4ff] rounded-lg text-center text-[11px]">
                   {(['line', 'phone', 'whatsapp', 'walkin'] as const).map(ch => (
@@ -530,15 +532,15 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               {/* Consultation Outcome */}
               <div>
                 <label className="block text-[11px] font-semibold text-[#0b1c30] mb-1">
-                  Consultation Outcome
+                  ผลการติดต่อ
                 </label>
                 <div className="space-y-1">
                   {[
-                    'Interested in Oligio X',
-                    'Contact Later',
-                    'No Response',
-                    'Appointment Booked',
-                    'Not Interested'
+                    'สนใจ ทำ Treatment ต่อ',
+                    'ให้ติดต่อกลับภายหลัง',
+                    'ไม่ตอบกลับ',
+                    'จองนัดแล้ว',
+                    'ไม่สนใจ'
                   ].map((opt, idx) => (
                     <button
                       key={idx}
@@ -562,7 +564,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               {/* Notes */}
               <div>
                 <label className="block text-[11px] font-semibold text-[#0b1c30] mb-1">
-                  Concierge Notes
+                  บันทึกเพิ่มเติม
                 </label>
                 <textarea
                   rows={3}
@@ -575,7 +577,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               {/* Next follow-up */}
               <div className="space-y-1.5">
                 <label className="block text-[11px] font-semibold text-[#0b1c30]">
-                  Next Follow-up Window
+                  นัดติดตามครั้งถัดไป
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
@@ -601,7 +603,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 className="w-full py-2.5 rounded-lg bg-black hover:bg-slate-800 text-white font-semibold text-[12px] flex items-center justify-center gap-1.5 transition-transform active:scale-95 shadow-sm"
               >
                 <span className="material-symbols-outlined text-[16px]">verified_user</span>
-                <span>Save & Update Patient Status</span>
+                <span>บันทึกและอัปเดตสถานะ</span>
               </button>
             </form>
           </div>
@@ -609,10 +611,10 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
           {/* Card: Unified CRM Timeline */}
           <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#c6c6cd]/30">
-              <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
-                Unified CRM Timeline
+              <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
+                ไทม์ไลน์การติดต่อ
               </span>
-              <span className="text-[11px] text-[#006a61] font-semibold">Live Sync</span>
+              <span className="text-[11px] text-[#006a61] font-semibold">อัปเดตล่าสุด</span>
             </div>
 
             <div className="space-y-4">

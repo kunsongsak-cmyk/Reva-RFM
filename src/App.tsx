@@ -142,7 +142,7 @@ export default function App() {
     setPatients(prev => [fullPatient, ...prev]);
     setSelectedPatient(fullPatient);
     setIsNewPatientOpen(false);
-    showToast(`Registered new patient ${fullPatient.name} (HN: ${fullPatient.hn})`);
+    showToast(`ลงทะเบียนคนไข้ใหม่ ${fullPatient.name} (HN: ${fullPatient.hn}) แล้ว`);
     handleNavigate('patient-detail');
   };
 
@@ -150,12 +150,12 @@ export default function App() {
     if (!bookAppointmentPatient) return;
     const newEvent = {
       id: `ev-${Date.now()}`,
-      title: `Appointment Confirmed: ${details.procedure.split(' - ')[0]}`,
-      timestamp: 'Today, Just now',
+      title: `ยืนยันนัด: ${details.procedure.split(' - ')[0]}`,
+      timestamp: 'วันนี้ เมื่อสักครู่',
       icon: 'event_available',
       iconBg: 'bg-[#006a61] text-white',
-      description: `Reserved on ${details.date} at ${details.time} with ${details.doctor}.`,
-      statusTag: 'Locked in Thonglor Suite 2'
+      description: `นัดวันที่ ${details.date} เวลา ${details.time} กับ ${details.doctor}`,
+      statusTag: 'จองห้องหัตถการแล้ว'
     };
 
     const updated = {
@@ -165,7 +165,7 @@ export default function App() {
 
     handleUpdatePatient(updated);
     setBookAppointmentPatient(null);
-    showToast(`Appointment booked for ${bookAppointmentPatient.name} on ${details.date}`);
+    showToast(`จองนัดให้ ${bookAppointmentPatient.name} วันที่ ${details.date} แล้ว`);
   };
 
   const handleOutcomeSaved = (outcome: {
@@ -178,12 +178,12 @@ export default function App() {
     if (!outcomePatient) return;
     const newEvent = {
       id: `ev-${Date.now()}`,
-      title: `${outcome.outcomeText} via ${outcome.channel.toUpperCase()}`,
-      timestamp: 'Today, Just now',
+      title: `${outcome.outcomeText} ผ่าน ${outcome.channel.toUpperCase()}`,
+      timestamp: 'วันนี้ เมื่อสักครู่',
       icon: outcome.channel === 'line' ? 'chat' : outcome.channel === 'phone' ? 'call' : 'check_circle',
       iconBg: 'bg-[#006a61] text-white',
       description: outcome.notes,
-      statusTag: `Next Follow-up: ${outcome.nextDate}`
+      statusTag: `ติดตามครั้งถัดไป: ${outcome.nextDate}`
     };
 
     const updated = {
@@ -193,19 +193,19 @@ export default function App() {
 
     handleUpdatePatient(updated);
     setOutcomePatient(null);
-    showToast(`Logged outcome for ${outcomePatient.name}`);
+    showToast(`บันทึกผลการติดต่อ ${outcomePatient.name} แล้ว`);
   };
 
   const handleLineMessageSent = (msg: string) => {
     if (!lineChatPatient) return;
     const newEvent = {
       id: `ev-${Date.now()}`,
-      title: 'LINE Concierge Message Sent',
-      timestamp: 'Today, Just now',
+      title: 'ส่งข้อความ LINE แล้ว',
+      timestamp: 'วันนี้ เมื่อสักครู่',
       icon: 'chat',
       iconBg: 'bg-[#00b900] text-white',
-      description: `Khun May sent: "${msg}"`,
-      statusTag: 'Delivered via LINE OA'
+      description: `คุณ May ส่ง: "${msg}"`,
+      statusTag: 'ส่งผ่าน LINE OA'
     };
 
     const updated = {
@@ -214,11 +214,11 @@ export default function App() {
     };
 
     handleUpdatePatient(updated);
-    showToast(`Message sent to ${lineChatPatient.name} via LINE OA`);
+    showToast(`ส่งข้อความถึง ${lineChatPatient.name} ทาง LINE OA แล้ว`);
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] flex flex-col font-['Inter']">
+    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] flex flex-col font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#131b2e] text-white px-4 py-3 rounded-xl shadow-2xl border border-white/10 flex items-center gap-2.5 animate-in slide-in-from-bottom-5 duration-200">
@@ -240,7 +240,7 @@ export default function App() {
         branch={branch}
         onBranchChange={b => {
           setBranch(b);
-          showToast(`Switched active branch to ${b}`);
+          showToast(`เปลี่ยนสาขาเป็น ${b}`);
         }}
       />
 
