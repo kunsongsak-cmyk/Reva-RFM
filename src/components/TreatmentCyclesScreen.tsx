@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Patient, ScreenType, TreatmentCategory } from '../types';
+import { Patient, ScreenType, CycleCategory } from '../types';
 import { CYCLE_INTERVAL_DAYS, formatBaht } from '../lib/rfm';
 
 interface TreatmentCyclesScreenProps {
@@ -18,7 +18,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
   const modalities = [
     {
       id: 'lifting',
-      category: 'Lifting' as TreatmentCategory,
+      category: 'Lifting' as CycleCategory,
       name: 'Monopolar RF & High-Intensity Ultrasound (Lifting)',
       protocols: ['Program Oligio X (600 Shots)', 'Ulthera SPT (800 Lines)', 'Ultraformer MPT (400 Shots)'],
       halfLifeMonths: '6 – 12 เดือน',
@@ -27,7 +27,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
     },
     {
       id: 'neurotoxin',
-      category: 'Injectables' as TreatmentCategory,
+      category: 'Injectables' as CycleCategory,
       name: 'Neurotoxin / Neuromodulator (Botox)',
       protocols: ['Botox Allergan 100u / 50u', 'Dysport Precision Aesthetic'],
       halfLifeMonths: '3 – 4 เดือน',
@@ -36,7 +36,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
     },
     {
       id: 'skin-booster',
-      category: 'Skin' as TreatmentCategory,
+      category: 'Skin' as CycleCategory,
       name: 'Polynucleotide (PN) & Hyaluronic Acid Skin Boosters',
       protocols: ['Rejuran Healer (2cc)', 'Belotero Revive Hydration', 'Juvelook Collagen Stimulator'],
       halfLifeMonths: '1 – 3 เดือน',
@@ -45,7 +45,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
     },
     {
       id: 'picosecond-laser',
-      category: 'Laser' as TreatmentCategory,
+      category: 'Laser' as CycleCategory,
       name: 'Picosecond Laser & Photothermal Brightening',
       protocols: ['Program Pico Discovery (Melasma & Tone)', 'Dual Yellow Vascular Tone'],
       halfLifeMonths: '4 – 6 สัปดาห์',

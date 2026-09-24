@@ -3,7 +3,7 @@ import {
   PatientCategory,
   PatientRecord,
   RfmSettings,
-  TreatmentCategory,
+  CycleCategory,
   TreatmentCycleStatus,
   TreatmentHistoryItem
 } from '../types';
@@ -14,14 +14,14 @@ export const DEFAULT_RFM_SETTINGS: RfmSettings = {
 };
 
 // Recommended days between repeat treatments, per category
-export const CYCLE_INTERVAL_DAYS: Record<TreatmentCategory, number> = {
+export const CYCLE_INTERVAL_DAYS: Record<CycleCategory, number> = {
   Lifting: 180,
   Injectables: 100,
   Skin: 45,
   Laser: 30
 };
 
-export const CYCLE_LABELS: Record<TreatmentCategory, string> = {
+export const CYCLE_LABELS: Record<CycleCategory, string> = {
   Lifting: 'ยกกระชับ (Lifting)',
   Injectables: 'Botox / Neurotoxin',
   Skin: 'Skin Booster',
@@ -61,6 +61,11 @@ export function formatThaiDate(value: Date | string): string {
   const d = typeof value === 'string' ? parseDate(value) : value;
   if (!d) return typeof value === 'string' ? value : '';
   return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+}
+
+/** Two-letter avatar initials, ignoring the "Khun"/"คุณ" honorific. */
+export function initials(name: string): string {
+  return name.replace(/^(khun\s+|คุณ\s*)/i, '').trim().slice(0, 2) || '?';
 }
 
 export function formatBaht(n: number): string {
@@ -117,12 +122,14 @@ const SEGMENT_VERDICT: Record<Exclude<PatientCategory, 'All'>, string> = {
 // ---------- Treatment cycles ----------
 
 export function computeCycles(treatments: TreatmentHistoryItem[], today: Date): TreatmentCycleStatus[] {
-  const latest = new Map<TreatmentCategory, { t: TreatmentHistoryItem; date: Date }>();
+  const latest = new Map<CycleCategory, { t: TreatmentHistoryItem; date: Date }>();
   for (const t of treatments) {
+    if (t.category === 'Other') continue;
     const date = parseDate(t.date);
     if (!date) continue;
-    const cur = latest.get(t.category);
-    if (!cur || date > cur.date) latest.set(t.category, { t, date });
+    const category = t.category;
+    const cur = latest.get(category);
+    if (!cur || date > cur.date) latest.set(category, { t, date });
   }
 
   const cycles: TreatmentCycleStatus[] = [];
@@ -215,7 +222,8 @@ export function enrichPatient(record: PatientRecord, settings: RfmSettings, now:
     .filter((x): x is { t: TreatmentHistoryItem; date: Date } => x.date !== null)
     .sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  const visits = dated.length;
+  // One bill can hold several items, so a visit is a distinct treatment date
+  const visits = new Set(dated.map(x => x.date.getTime())).size;
   const lifetimeValue = dated.reduce((sum, x) => sum + x.t.price, 0);
   const trailing12M = dated
     .filter(x => daysBetween(x.date, today) <= 365)

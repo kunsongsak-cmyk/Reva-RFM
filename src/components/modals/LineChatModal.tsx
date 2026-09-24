@@ -59,7 +59,7 @@ export const LineChatModal: React.FC<LineChatModalProps> = ({
             <div>
               <div className="font-display font-semibold text-[15px] flex items-center gap-1.5 leading-tight">
                 {patient.name}
-                <span className="text-[11px] font-normal opacity-90">({patient.nickname})</span>
+                <span className="text-[11px] font-normal opacity-90">{patient.nickname && `(${patient.nickname})`}</span>
               </div>
               <div className="text-[11px] opacity-90 flex items-center gap-1">
                 <span>LINE Official Account</span>

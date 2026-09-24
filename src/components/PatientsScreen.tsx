@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Patient, PatientCategory, ScreenType } from '../types';
+import { initials } from '../lib/rfm';
 
 interface PatientsScreenProps {
   patients: Patient[];
@@ -7,6 +8,7 @@ interface PatientsScreenProps {
   onSelectPatient: (patient: Patient) => void;
   onNavigate: (screen: ScreenType) => void;
   onOpenNewPatientModal: () => void;
+  onOpenImportModal: () => void;
   onOpenBroadcastModal: (cohort: string, count: number) => void;
   onOpenLineChat: (patient: Patient) => void;
 }
@@ -17,6 +19,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
   onSelectPatient,
   onNavigate,
   onOpenNewPatientModal,
+  onOpenImportModal,
   onOpenBroadcastModal,
   onOpenLineChat
 }) => {
@@ -105,6 +108,14 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
           >
             <span className="material-symbols-outlined text-[18px]">campaign</span>
             <span>ส่งข้อความทั้งกลุ่ม</span>
+          </button>
+
+          <button
+            onClick={onOpenImportModal}
+            className="px-3.5 py-2 bg-white border border-[#c6c6cd]/50 hover:bg-[#eff4ff] text-[#0b1c30] text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
+          >
+            <span className="material-symbols-outlined text-[18px]">upload_file</span>
+            <span>นำเข้าข้อมูล</span>
           </button>
 
           <button
@@ -301,20 +312,20 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[#006a61] text-[13px] shrink-0">
-                            {p.name.slice(5, 7) || 'VIP'}
+                            {initials(p.name)}
                           </div>
                         )}
                         <div>
                           <div className="font-display font-semibold text-[#0b1c30] flex items-center gap-1.5 leading-snug">
                             <span>{p.name}</span>
                             <span className="text-[11px] font-normal text-[#45464d]">
-                              ({p.nickname})
+                              {p.nickname && `(${p.nickname})`}
                             </span>
                           </div>
                           <div className="text-[11px] text-[#45464d] flex items-center gap-1.5 mt-0.5">
                             <span className="font-mono text-[#006a61] font-semibold">HN: {p.hn}</span>
                             <span>•</span>
-                            <span>{p.age} ปี</span>
+                            <span>{p.age ? `${p.age} ปี` : 'ไม่ระบุอายุ'}</span>
                             <span>•</span>
                             <span>{p.gender}</span>
                           </div>

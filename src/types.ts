@@ -15,7 +15,9 @@ export type PatientCategory =
   | 'At Risk'
   | 'Lost / Inactive';
 
-export type TreatmentCategory = 'Lifting' | 'Injectables' | 'Laser' | 'Skin';
+export type TreatmentCategory = 'Lifting' | 'Injectables' | 'Laser' | 'Skin' | 'Other';
+// Categories with a repeat-treatment cycle; 'Other' (IV drip, fillers, take-home…) has none
+export type CycleCategory = Exclude<TreatmentCategory, 'Other'>;
 
 export interface TreatmentHistoryItem {
   id: string;
@@ -47,7 +49,7 @@ export interface TimelineEvent {
 
 export interface TreatmentCycleStatus {
   protocolName: string;
-  category: TreatmentCategory;
+  category: CycleCategory;
   lastDate: string;
   lastTreatment: string;
   targetDate: string;

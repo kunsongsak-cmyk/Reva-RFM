@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Patient, TreatmentCategory, TreatmentHistoryItem, TimelineEvent } from '../types';
-import { formatThaiDate } from '../lib/rfm';
+import { formatThaiDate, initials } from '../lib/rfm';
 
 interface PatientDossierScreenProps {
   patient: Patient;
@@ -102,14 +102,14 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               />
             ) : (
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[#006a61] text-[24px] shrink-0 shadow-sm">
-                {patient.name.slice(5, 7) || 'VIP'}
+                {initials(patient.name)}
               </div>
             )}
 
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="font-display text-[22px] sm:text-[24px] font-bold text-[#0b1c30] leading-none">
-                  {patient.name} <span className="text-[16px] font-normal text-[#45464d]">({patient.nickname})</span>
+                  {patient.name} <span className="text-[16px] font-normal text-[#45464d]">{patient.nickname && `(${patient.nickname})`}</span>
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#ffdad6] text-[#ba1a1a]">
                   {patient.category.toUpperCase()} (RFM: {patient.rfmScore.recencyScore}-{patient.rfmScore.frequencyScore}-{patient.rfmScore.monetaryScore})
@@ -119,15 +119,18 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               <div className="flex flex-wrap items-center gap-2 text-[12px] text-[#45464d]">
                 <span className="font-mono text-[#006a61] font-semibold">HN: {patient.hn}</span>
                 <span>•</span>
-                <span>อายุ {patient.age} ปี</span>
+                <span>{patient.age ? `อายุ ${patient.age} ปี` : 'ไม่ระบุอายุ'}</span>
                 <span>•</span>
-                <span>{patient.nationality}</span>
-                <span>•</span>
+                {patient.nationality && <><span>{patient.nationality}</span><span>•</span></>}
+                {patient.lineId && (
+                <>
                 <span className="text-[#00a000] font-semibold flex items-center gap-0.5">
                   <span className="material-symbols-outlined text-[14px]">chat</span>
                   {patient.lineId}
                 </span>
                 <span>•</span>
+                </>
+                )}
                 <span className="font-mono">{patient.phone}</span>
               </div>
 
@@ -135,16 +138,18 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
                 <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
                   <span className="text-[#76777d]">ผู้ดูแลการขาย:</span>
-                  <strong>{patient.salesOwner}</strong> ({patient.salesOwnerRole})
+                  <strong>{patient.salesOwner}</strong>{patient.salesOwnerRole && ` (${patient.salesOwnerRole})`}
                 </span>
                 <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
                   <span className="text-[#76777d]">แพทย์:</span>
-                  <strong>{patient.attendingDoctor}</strong> ({patient.doctorSpecialty})
+                  <strong>{patient.attendingDoctor}</strong>{patient.doctorSpecialty && ` (${patient.doctorSpecialty})`}
                 </span>
+                {patient.branch && (
                 <span className="px-2.5 py-1 rounded-md bg-[#eff4ff] text-[#0b1c30] font-medium flex items-center gap-1 border border-[#c6c6cd]/30">
                   <span className="text-[#76777d]">สาขา:</span>
                   <strong>{patient.branch}</strong>
                 </span>
+                )}
               </div>
             </div>
           </div>
@@ -212,9 +217,11 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
               <span className="font-sans text-[11px] font-semibold uppercase tracking-wider text-[#45464d]">
                 มูลค่าคนไข้ & RFM
               </span>
+              {patient.tier && (
               <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#eff4ff] text-[#006a61] border border-[#86f2e4]/30">
                 ระดับ {patient.tier}
               </span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -312,6 +319,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
             </div>
 
             {/* Recommended Proposal */}
+            {patient.recommendedProposal.title && (
             <div className="p-3.5 rounded-xl bg-[#e5eeff] border border-[#006a61]/30 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#006a61] flex items-center gap-1">
@@ -340,6 +348,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                 <span>{offerAttached ? 'แนบข้อเสนอในข้อความแล้ว' : 'แนบข้อเสนอในข้อความ'}</span>
               </button>
             </div>
+            )}
           </div>
         </div>
 
@@ -419,7 +428,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
 
             {/* Filter buttons */}
             <div className="flex items-center gap-1.5">
-              {(['All', 'Lifting', 'Injectables', 'Skin', 'Laser'] as const).map(cat => (
+              {(['All', 'Lifting', 'Injectables', 'Skin', 'Laser', 'Other'] as const).map(cat => (
                 <button
                   key={cat}
                   onClick={() => setTreatmentCategoryFilter(cat)}
@@ -429,7 +438,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                       : 'bg-[#eff4ff] text-[#45464d] hover:text-[#0b1c30]'
                   }`}
                 >
-                  {cat === 'All' ? 'ทั้งหมด' : cat} ({cat === 'All' ? patient.treatments.length : patient.treatments.filter(t => t.category === cat).length})
+                  {cat === 'All' ? 'ทั้งหมด' : cat === 'Other' ? 'อื่นๆ' : cat} ({cat === 'All' ? patient.treatments.length : patient.treatments.filter(t => t.category === cat).length})
                 </button>
               ))}
             </div>

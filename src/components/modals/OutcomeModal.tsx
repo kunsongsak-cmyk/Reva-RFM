@@ -62,7 +62,7 @@ export const OutcomeModal: React.FC<OutcomeModalProps> = ({
                 </span>
               </div>
               <p className="text-[12px] text-[#45464d]">
-                คนไข้: {patient.name} ({patient.nickname}) • HN: {patient.hn}
+                คนไข้: {patient.name} {patient.nickname && `(${patient.nickname})`} • HN: {patient.hn}
               </p>
             </div>
           </div>

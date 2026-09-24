@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { ScreenType, Patient, PatientCategory, PatientRecord, RfmSettings } from './types';
 import { INITIAL_PATIENTS } from './data/mockData';
 import { DEFAULT_RFM_SETTINGS, enrichPatient } from './lib/rfm';
+import { mergeRecords } from './lib/importer';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { TodaysQueueScreen } from './components/TodaysQueueScreen';
@@ -19,6 +20,7 @@ import { NewPatientModal } from './components/modals/NewPatientModal';
 import { CommandPalette } from './components/modals/CommandPalette';
 import { BroadcastModal } from './components/modals/BroadcastModal';
 import { WeeklyBriefModal } from './components/modals/WeeklyBriefModal';
+import { ImportModal, ImportMode } from './components/modals/ImportModal';
 
 const SETTINGS_KEY = 'reva-rfm-settings';
 
@@ -53,6 +55,7 @@ export default function App() {
   const [isNewPatientOpen, setIsNewPatientOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isWeeklyBriefOpen, setIsWeeklyBriefOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [broadcastConfig, setBroadcastConfig] = useState<{ isOpen: boolean; cohort: string; count: number }>({
     isOpen: false,
     cohort: '',
@@ -89,6 +92,15 @@ export default function App() {
 
   const handleUpdatePatient = (updated: PatientRecord) => {
     setRecords(prev => prev.map(p => (p.id === updated.id ? updated : p)));
+  };
+
+  const handleImport = (imported: PatientRecord[], mode: ImportMode) => {
+    const next = mode === 'replace' ? imported : mergeRecords(records, imported);
+    setRecords(next);
+    if (mode === 'replace') setSelectedPatientId(next[0].id);
+    setIsImportOpen(false);
+    showToast(`นำเข้าข้อมูลคนไข้ ${imported.length.toLocaleString()} รายเรียบร้อย`);
+    handleNavigate('patients');
   };
 
   const handleSaveSettings = (next: RfmSettings) => {
@@ -253,6 +265,7 @@ export default function App() {
             onSelectPatient={p => setSelectedPatient(p)}
             onNavigate={handleNavigate}
             onOpenNewPatientModal={() => setIsNewPatientOpen(true)}
+            onOpenImportModal={() => setIsImportOpen(true)}
             onOpenBroadcastModal={(cohort, count) => setBroadcastConfig({ isOpen: true, cohort, count })}
             onOpenLineChat={p => setLineChatPatient(p)}
           />
@@ -337,6 +350,10 @@ export default function App() {
           targetCohort={broadcastConfig.cohort}
           count={broadcastConfig.count}
         />
+      )}
+
+      {isImportOpen && (
+        <ImportModal onClose={() => setIsImportOpen(false)} onImport={handleImport} />
       )}
 
       {isWeeklyBriefOpen && (

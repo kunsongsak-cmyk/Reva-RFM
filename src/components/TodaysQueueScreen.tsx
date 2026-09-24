@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Patient, ScreenType } from '../types';
-import { isDueSoon, isOverdue, needsFollowUp } from '../lib/rfm';
+import { isDueSoon, isOverdue, needsFollowUp, initials } from '../lib/rfm';
 
 interface TodaysQueueScreenProps {
   patients: Patient[];
@@ -289,14 +289,14 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                             />
                           ) : (
                             <div className="w-10 h-10 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[#006a61] text-[13px] shrink-0">
-                              {p.name.slice(5, 7) || 'VIP'}
+                              {initials(p.name)}
                             </div>
                           )}
                           <div>
                             <div className="font-display font-semibold text-[#0b1c30] flex items-center gap-1.5 leading-snug">
                               <span>{p.name}</span>
                               <span className="text-[11px] font-normal text-[#45464d]">
-                                ({p.nickname})
+                                {p.nickname && `(${p.nickname})`}
                               </span>
                             </div>
                             <div className="text-[11px] text-[#45464d] flex items-center gap-1 mt-0.5">
@@ -434,20 +434,19 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
               />
             ) : (
               <div className="w-14 h-14 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[#006a61] text-[18px] shrink-0 shadow-sm">
-                {selectedPatient.name.slice(5, 7) || 'VIP'}
+                {initials(selectedPatient.name)}
               </div>
             )}
             <div>
               <div className="font-display font-bold text-[17px] text-[#0b1c30] leading-tight flex items-center gap-1.5">
                 <span>{selectedPatient.name}</span>
-                <span className="text-[12px] font-normal text-[#45464d]">({selectedPatient.nickname})</span>
+                <span className="text-[12px] font-normal text-[#45464d]">{selectedPatient.nickname && `(${selectedPatient.nickname})`}</span>
               </div>
               <div className="text-[12px] text-[#45464d] flex items-center gap-1.5 mt-0.5">
                 <span className="font-mono text-[#006a61] font-semibold">HN: {selectedPatient.hn}</span>
                 <span>•</span>
-                <span>{selectedPatient.age} ปี</span>
-                <span>•</span>
-                <span>{selectedPatient.tier}</span>
+                <span>{selectedPatient.age ? `${selectedPatient.age} ปี` : 'ไม่ระบุอายุ'}</span>
+                {selectedPatient.tier && <><span>•</span><span>{selectedPatient.tier}</span></>}
               </div>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#ffdad6] text-[#ba1a1a]">
@@ -520,6 +519,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
           </div>
 
           {/* Recommended proposal */}
+          {selectedPatient.recommendedProposal.title && (
           <div className="p-3.5 rounded-xl bg-[#e5eeff] border border-[#006a61]/20 space-y-2">
             <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#006a61] uppercase tracking-wider">
               <span className="material-symbols-outlined text-[16px]">verified</span>
@@ -532,6 +532,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
               {selectedPatient.recommendedProposal.subtitle}
             </p>
           </div>
+          )}
 
           {/* Fast Action Buttons */}
           <div className="space-y-2 pt-1">

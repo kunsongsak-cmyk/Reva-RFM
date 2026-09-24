@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Patient, ScreenType } from '../../types';
+import { initials } from '../../lib/rfm';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -136,12 +137,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[12px] text-[#006a61]">
-                    {p.name.slice(5, 7) || 'VIP'}
+                    {initials(p.name)}
                   </div>
                   <div>
                     <div className="text-[13px] font-semibold text-[#0b1c30] group-hover:text-[#006a61] transition-colors flex items-center gap-1.5">
                       <span>{p.name}</span>
-                      <span className="text-[11px] text-[#45464d] font-normal">({p.nickname})</span>
+                      <span className="text-[11px] text-[#45464d] font-normal">{p.nickname && `(${p.nickname})`}</span>
                     </div>
                     <div className="text-[11px] text-[#76777d] flex items-center gap-1.5">
                       <span className="font-mono text-[#006a61] font-semibold">HN: {p.hn}</span>
