@@ -2,8 +2,7 @@ import { TreatmentCategory } from '../types';
 
 // Reva course-code prefixes (from the clinic's product sales report).
 // Longer prefixes are checked first. Codes not listed here fall through to
-// the name keywords below; fillers (C-JUV, C-RES, C-HA, C-JEL, C-SCU) are left
-// out on purpose until their recall interval is decided.
+// the name keywords below.
 export const COURSE_CODE_CATEGORIES: [prefix: string, category: TreatmentCategory][] = [
   ['C-OLIX', 'Lifting'], // Oligio
   ['C-UTR', 'Lifting'], // Ulthera
@@ -12,11 +11,20 @@ export const COURSE_CODE_CATEGORIES: [prefix: string, category: TreatmentCategor
   ['C-BOT', 'Injectables'],
   ['C-XEO', 'Injectables'], // Xeomin
   ['C-NEU', 'Injectables'], // Neuronox
+  ['C-JUV', 'Injectables'], // Filler
+  ['C-RES', 'Injectables'], // Filler
+  ['C-HA', 'Injectables'], // Filler
+  ['C-JEL', 'Injectables'], // Filler
+  ['C-SCU', 'Injectables'], // Filler
   ['C-RED', 'Skin'], // Red Touch Pro (Skin Quality group)
   ['C-EJA', 'Skin'], // Ejal40
   ['C-BBG', 'Skin'], // BabyGLOW / Redensity
   ['C-DIO', 'Laser'] // Triplex Diode hair removal
 ];
+
+// Checked before NAME_KEYWORDS: names that would otherwise match a category
+// but are not a treatment to recall (e.g. dissolving filler)
+export const NAME_EXCLUSIONS = ['สลายฟิลเลอร์', 'hyaluronidase'];
 
 // Matched against the lower-cased treatment name when the code gives no answer
 export const NAME_KEYWORDS: [keyword: string, category: TreatmentCategory][] = [
@@ -34,6 +42,10 @@ export const NAME_KEYWORDS: [keyword: string, category: TreatmentCategory][] = [
   ['dysport', 'Injectables'],
   ['neuronox', 'Injectables'],
   ['โบท็อก', 'Injectables'],
+  ['filler', 'Injectables'],
+  ['ฟิลเลอร์', 'Injectables'],
+  ['juvederm', 'Injectables'],
+  ['restylane', 'Injectables'],
   ['rejuran', 'Skin'],
   ['juvelook', 'Skin'],
   ['profhilo', 'Skin'],
@@ -61,6 +73,7 @@ export function inferCategory(code: string, name: string): TreatmentCategory {
     if (byCode) return byCode[1];
   }
   const n = name.toLowerCase();
+  if (NAME_EXCLUSIONS.some(kw => n.includes(kw))) return 'Other';
   const byName = NAME_KEYWORDS.find(([kw]) => n.includes(kw));
   return byName ? byName[1] : 'Other';
 }

@@ -23,7 +23,7 @@ export const CYCLE_INTERVAL_DAYS: Record<CycleCategory, number> = {
 
 export const CYCLE_LABELS: Record<CycleCategory, string> = {
   Lifting: 'ยกกระชับ (Lifting)',
-  Injectables: 'Botox / Neurotoxin',
+  Injectables: 'Botox / Filler',
   Skin: 'Skin Booster',
   Laser: 'Laser'
 };
