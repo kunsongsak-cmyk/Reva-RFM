@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
+import { RfmSettings } from '../types';
+import { DEFAULT_RFM_SETTINGS } from '../lib/rfm';
 
-export const SettingsScreen: React.FC = () => {
-  const [lineConnected, setLineConnected] = useState(true);
+interface SettingsScreenProps {
+  settings: RfmSettings;
+  onSave: (settings: RfmSettings) => void;
+}
+
+export const SettingsScreen: React.FC<SettingsScreenProps> = ({ settings, onSave }) => {
   const [autoRecallHours, setAutoRecallHours] = useState('13:00 - 15:00');
-  const [rfmRecencyDays, setRfmRecencyDays] = useState(90);
-  const [rfmMonetaryThreshold, setRfmMonetaryThreshold] = useState(100000);
+  const [rfmRecencyDays, setRfmRecencyDays] = useState(settings.recencyDays);
+  const [rfmMonetaryThreshold, setRfmMonetaryThreshold] = useState(settings.monetaryThreshold);
   const [savedNotice, setSavedNotice] = useState(false);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    onSave({ recencyDays: rfmRecencyDays, monetaryThreshold: rfmMonetaryThreshold });
     setSavedNotice(true);
     setTimeout(() => setSavedNotice(false), 2500);
   };
@@ -16,18 +23,18 @@ export const SettingsScreen: React.FC = () => {
   return (
     <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="font-['Plus_Jakarta_Sans'] text-[24px] font-bold text-[#0b1c30] tracking-tight">
-          Clinical CRM Engine Settings
+        <h1 className="font-display text-[24px] font-bold text-[#0b1c30] tracking-tight">
+          ตั้งค่าระบบ CRM
         </h1>
-        <p className="font-['Inter'] text-[14px] text-[#45464d] mt-0.5">
-          RFM Scoring Weights, Physiological Efficacy Decay Thresholds, & LINE Official Webhooks
+        <p className="font-sans text-[14px] text-[#45464d] mt-0.5">
+          เกณฑ์คะแนน RFM และการเชื่อมต่อ LINE Official Account
         </p>
       </div>
 
       {savedNotice && (
         <div className="p-3 bg-[#86f2e4]/30 border border-[#006a61]/30 rounded-xl text-[#006a61] text-[13px] font-semibold flex items-center gap-2 animate-in fade-in">
           <span className="material-symbols-outlined text-[18px]">check_circle</span>
-          <span>Engine parameters updated successfully. Algorithms re-calibrated.</span>
+          <span>บันทึกการตั้งค่าเรียบร้อยแล้ว</span>
         </div>
       )}
 
@@ -40,23 +47,23 @@ export const SettingsScreen: React.FC = () => {
                 <span className="material-symbols-outlined text-[22px]">chat</span>
               </div>
               <div>
-                <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] text-[#0b1c30]">
-                  LINE Official Account Concierge API Gateway
+                <h3 className="font-display font-bold text-[15px] text-[#0b1c30]">
+                  เชื่อมต่อ LINE Official Account
                 </h3>
                 <span className="text-[12px] text-[#45464d]">
-                  Direct bidirectional sync with Thailand LINE Messaging API
+                  รับ-ส่งข้อความผ่าน LINE Messaging API
                 </span>
               </div>
             </div>
             <span className="px-2.5 py-1 rounded bg-[#00b900]/10 text-[#00a000] text-[11px] font-bold flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00b900] animate-pulse"></span>
-              Connected
+              เชื่อมต่อแล้ว
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px]">
             <div>
-              <label className="block font-semibold text-[#0b1c30] mb-1">Clinic Channel Access Token</label>
+              <label className="block font-semibold text-[#0b1c30] mb-1">Channel Access Token</label>
               <input
                 type="password"
                 defaultValue="••••••••••••••••••••••••••••••••••••••••"
@@ -65,15 +72,15 @@ export const SettingsScreen: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block font-semibold text-[#0b1c30] mb-1">Autonomous Outreach Time Window</label>
+              <label className="block font-semibold text-[#0b1c30] mb-1">ช่วงเวลาส่งข้อความอัตโนมัติ</label>
               <select
                 value={autoRecallHours}
                 onChange={e => setAutoRecallHours(e.target.value)}
                 className="w-full h-10 px-3 rounded-lg bg-[#eff4ff] border border-[#c6c6cd]/40 text-[#0b1c30] outline-none"
               >
-                <option value="13:00 - 15:00">13:00 – 15:00 (Peak Open Rate in Bangkok)</option>
-                <option value="11:00 - 13:00">11:00 – 13:00 (Lunch Concierge Hour)</option>
-                <option value="16:00 - 18:00">16:00 – 18:00 (Evening Pre-commute)</option>
+                <option value="13:00 - 15:00">13:00 – 15:00 (อัตราเปิดอ่านสูงสุด)</option>
+                <option value="11:00 - 13:00">11:00 – 13:00 (ช่วงพักกลางวัน)</option>
+                <option value="16:00 - 18:00">16:00 – 18:00 (ช่วงก่อนเลิกงาน)</option>
               </select>
             </div>
           </div>
@@ -82,11 +89,11 @@ export const SettingsScreen: React.FC = () => {
         {/* RFM Mathematical Thresholds */}
         <div className="bg-white rounded-xl border border-[#c6c6cd]/40 p-6 shadow-xs space-y-4">
           <div className="pb-3 border-b border-[#c6c6cd]/30">
-            <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] text-[#0b1c30]">
-              RFM Scoring Engine Parameters
+            <h3 className="font-display font-bold text-[15px] text-[#0b1c30]">
+              เกณฑ์การให้คะแนน RFM
             </h3>
             <span className="text-[12px] text-[#45464d]">
-              Adjust algorithmic cutoffs that define Champions, Loyal VIPs, and At-Risk states
+              ปรับเกณฑ์ที่ใช้แบ่งกลุ่ม Champions, Loyal VIPs และ At Risk
             </span>
           </div>
 
@@ -94,10 +101,10 @@ export const SettingsScreen: React.FC = () => {
             <div>
               <div className="flex justify-between mb-1">
                 <label className="font-semibold text-[#0b1c30]">
-                  Recency Warning Decay Threshold ({rfmRecencyDays} Days)
+                  เกณฑ์ Recency ({rfmRecencyDays} วัน)
                 </label>
                 <span className="font-mono text-[#ba1a1a] font-bold">
-                  &gt;{rfmRecencyDays}d triggers At-Risk status
+                  เกิน {rfmRecencyDays} วัน = At Risk
                 </span>
               </div>
               <input
@@ -114,10 +121,10 @@ export const SettingsScreen: React.FC = () => {
             <div>
               <div className="flex justify-between mb-1">
                 <label className="font-semibold text-[#0b1c30]">
-                  High Spender Tier Cutoff (฿{rfmMonetaryThreshold.toLocaleString()})
+                  เกณฑ์ยอดใช้จ่ายสูง (฿{rfmMonetaryThreshold.toLocaleString()})
                 </label>
                 <span className="font-mono text-[#006a61] font-bold">
-                  Monetary Score 5/5 Qualifier
+                  ยอด 12 เดือนถึงเกณฑ์ = Monetary 5/5
                 </span>
               </div>
               <input
@@ -132,13 +139,29 @@ export const SettingsScreen: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-2 flex justify-end">
+          <div className="p-3 rounded-lg bg-[#eff4ff] text-[12px] text-[#45464d] leading-relaxed space-y-1">
+            <p><strong className="text-[#0b1c30]">Recency:</strong> มาไม่เกิน 1/3 ของเกณฑ์ = 5, ไม่เกิน 2/3 = 4, ไม่เกินเกณฑ์ = 3, ไม่เกิน 2 เท่า = 2, เกินกว่านั้น = 1</p>
+            <p><strong className="text-[#0b1c30]">Frequency:</strong> จำนวนครั้งที่มารับบริการทั้งหมด 10+ = 5, 6+ = 4, 4+ = 3, 2+ = 2, 1 = 1</p>
+            <p><strong className="text-[#0b1c30]">Monetary:</strong> ยอด 12 เดือน ≥ เกณฑ์ = 5, ≥ 60% = 4, ≥ 30% = 3, ≥ 10% = 2</p>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setRfmRecencyDays(DEFAULT_RFM_SETTINGS.recencyDays);
+                setRfmMonetaryThreshold(DEFAULT_RFM_SETTINGS.monetaryThreshold);
+              }}
+              className="px-4 py-2.5 text-[13px] rounded-lg text-[#45464d] hover:bg-slate-100"
+            >
+              คืนค่าเริ่มต้น
+            </button>
             <button
               type="submit"
               className="px-5 py-2.5 bg-black hover:bg-slate-800 text-white font-semibold text-[13px] rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
             >
               <span className="material-symbols-outlined text-[18px]">save</span>
-              <span>Save Configuration</span>
+              <span>บันทึกการตั้งค่า</span>
             </button>
           </div>
         </div>

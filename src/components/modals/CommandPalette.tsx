@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Patient, ScreenType } from '../../types';
+import { initials } from '../../lib/rfm';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             autoFocus
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Search VIP dossier, HN, phone, procedure, or action..."
+            placeholder="ค้นหาชื่อคนไข้, HN, เบอร์โทร หรือกลุ่ม..."
             className="flex-1 bg-transparent text-[14px] text-[#0b1c30] outline-none placeholder:text-[#76777d]"
           />
           <kbd className="px-2 py-0.5 rounded bg-white border border-[#c6c6cd] text-[11px] font-mono text-[#45464d]">
@@ -65,7 +66,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           {/* Quick Navigation Links */}
           {!query && (
             <div className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#76777d]">
-              Quick Navigations
+              ไปที่หน้า
             </div>
           )}
           {!query && (
@@ -79,9 +80,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               >
                 <div className="flex items-center gap-2.5">
                   <span className="material-symbols-outlined text-[18px] text-[#006a61]">view_timeline</span>
-                  <span>Today's Priority Queue</span>
+                  <span>คิวติดตามวันนี้</span>
                 </div>
-                <span className="text-[11px] text-[#76777d]">18 candidates</span>
+                <span className="text-[11px] text-[#76777d]">{patients.filter(p => p.priorityLevel === 'Critical' || p.priorityLevel === 'High').length} ราย</span>
               </button>
 
               <button
@@ -93,9 +94,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               >
                 <div className="flex items-center gap-2.5">
                   <span className="material-symbols-outlined text-[18px] text-[#006a61]">person_search</span>
-                  <span>Patient Database & Segment Intelligence</span>
+                  <span>ฐานข้อมูลคนไข้ & กลุ่ม RFM</span>
                 </div>
-                <span className="text-[11px] text-[#76777d]">1,482 patients</span>
+                <span className="text-[11px] text-[#76777d]">{patients.length.toLocaleString()} ราย</span>
               </button>
 
               <button
@@ -107,21 +108,21 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               >
                 <div className="flex items-center gap-2.5">
                   <span className="material-symbols-outlined text-[18px] text-[#006a61]">insights</span>
-                  <span>Executive Revenue Attribution Dashboard</span>
+                  <span>ภาพรวมการกลับมาใช้บริการ & รายได้</span>
                 </div>
-                <span className="text-[11px] text-[#76777d]">MTD Analytics</span>
+                <span className="text-[11px] text-[#76777d]">รายงานเดือนนี้</span>
               </button>
             </>
           )}
 
           {/* Patients Header */}
           <div className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#76777d]">
-            VIP Patient Dossiers
+            รายชื่อคนไข้
           </div>
 
           {filteredPatients.length === 0 ? (
             <div className="p-6 text-center text-[#76777d] text-[13px]">
-              No patients found matching "{query}"
+              ไม่พบคนไข้ที่ตรงกับ "{query}"
             </div>
           ) : (
             filteredPatients.map(p => (
@@ -136,12 +137,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[12px] text-[#006a61]">
-                    {p.name.slice(5, 7) || 'VIP'}
+                    {initials(p.name)}
                   </div>
                   <div>
                     <div className="text-[13px] font-semibold text-[#0b1c30] group-hover:text-[#006a61] transition-colors flex items-center gap-1.5">
                       <span>{p.name}</span>
-                      <span className="text-[11px] text-[#45464d] font-normal">({p.nickname})</span>
+                      <span className="text-[11px] text-[#45464d] font-normal">{p.nickname && `(${p.nickname})`}</span>
                     </div>
                     <div className="text-[11px] text-[#76777d] flex items-center gap-1.5">
                       <span className="font-mono text-[#006a61] font-semibold">HN: {p.hn}</span>
@@ -157,7 +158,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     ฿{(p.lifetimeValue).toLocaleString()} LTV
                   </span>
                   <span className="block text-[10px] text-[#76777d]">
-                    Score: {p.priorityScore}/100
+                    คะแนน: {p.priorityScore}/100
                   </span>
                 </div>
               </button>

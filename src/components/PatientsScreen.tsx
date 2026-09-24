@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Patient, PatientCategory, ScreenType } from '../types';
+import { initials } from '../lib/rfm';
 
 interface PatientsScreenProps {
   patients: Patient[];
@@ -7,6 +8,7 @@ interface PatientsScreenProps {
   onSelectPatient: (patient: Patient) => void;
   onNavigate: (screen: ScreenType) => void;
   onOpenNewPatientModal: () => void;
+  onOpenImportModal: () => void;
   onOpenBroadcastModal: (cohort: string, count: number) => void;
   onOpenLineChat: (patient: Patient) => void;
 }
@@ -17,6 +19,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
   onSelectPatient,
   onNavigate,
   onOpenNewPatientModal,
+  onOpenImportModal,
   onOpenBroadcastModal,
   onOpenLineChat
 }) => {
@@ -27,15 +30,16 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
   const [doctorFilter, setDoctorFilter] = useState('All');
   const [minSpend, setMinSpend] = useState(0);
 
-  const segments: { label: PatientCategory; count: number; color?: string }[] = [
-    { label: 'All', count: 1482 },
-    { label: 'Champions', count: 182, color: 'text-[#006a61]' },
-    { label: 'Loyal VIPs', count: 328, color: 'text-[#565e74]' },
-    { label: 'New Patients', count: 192, color: 'text-[#0b1c30]' },
-    { label: 'Need Attention', count: 264, color: 'text-[#c76c00]' },
-    { label: 'At Risk', count: 286, color: 'text-[#ba1a1a]' },
-    { label: 'Lost / Inactive', count: 230, color: 'text-[#76777d]' }
-  ];
+  // Follow the sidebar when it switches segment while this screen is open
+  useEffect(() => {
+    setActiveSegment(selectedCategory || 'All');
+  }, [selectedCategory]);
+
+  const segmentLabels: PatientCategory[] = ['All', 'Champions', 'Loyal VIPs', 'New Patients', 'Need Attention', 'At Risk', 'Lost / Inactive'];
+  const segments = segmentLabels.map(label => ({
+    label,
+    count: label === 'All' ? patients.length : patients.filter(p => p.category === label).length
+  }));
 
   const filteredPatients = patients.filter(p => {
     if (activeSegment !== 'All' && p.category !== activeSegment) return false;
@@ -74,11 +78,11 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
     const csvRows = filteredPatients
       .map(p => `"${p.hn}","${p.name}","${p.nickname}",${p.age},"${p.gender}","${p.phone}","${p.category}",${p.lifetimeValue},"${p.lastVisitDate}","${p.attendingDoctor}"`)
       .join('\n');
-    const blob = new Blob([csvHeader + csvRows], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['\uFEFF' + csvHeader + csvRows], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Aura_Patients_Export_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `Reva_Patients_Export_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -89,11 +93,11 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
       {/* Screen Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-['Plus_Jakarta_Sans'] text-[24px] font-bold text-[#0b1c30] tracking-tight">
-            Patient Database & Segment Intelligence
+          <h1 className="font-display text-[24px] font-bold text-[#0b1c30] tracking-tight">
+            ฐานข้อมูลคนไข้ & กลุ่ม RFM
           </h1>
-          <p className="font-['Inter'] text-[14px] text-[#45464d] mt-0.5">
-            1,482 Registered VIP Dossiers • Segmented by Clinical RFM Efficacy & Lifetime Value
+          <p className="font-sans text-[14px] text-[#45464d] mt-0.5">
+            คนไข้ที่ลงทะเบียน {patients.length.toLocaleString()} ราย • แบ่งกลุ่มตาม RFM และยอดใช้จ่ายสะสม (LTV)
           </p>
         </div>
 
@@ -103,7 +107,15 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
             className="px-3.5 py-2 bg-white border border-[#c6c6cd]/50 hover:bg-[#eff4ff] text-[#006a61] text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
           >
             <span className="material-symbols-outlined text-[18px]">campaign</span>
-            <span>Broadcast Cohort</span>
+            <span>ส่งข้อความทั้งกลุ่ม</span>
+          </button>
+
+          <button
+            onClick={onOpenImportModal}
+            className="px-3.5 py-2 bg-white border border-[#c6c6cd]/50 hover:bg-[#eff4ff] text-[#0b1c30] text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
+          >
+            <span className="material-symbols-outlined text-[18px]">upload_file</span>
+            <span>นำเข้าข้อมูล</span>
           </button>
 
           <button
@@ -119,7 +131,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
             className="px-4 py-2 bg-black hover:bg-slate-800 text-white text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
           >
             <span className="material-symbols-outlined text-[18px]">add</span>
-            <span>New Patient Intake</span>
+            <span>ลงทะเบียนคนไข้ใหม่</span>
           </button>
         </div>
       </div>
@@ -136,7 +148,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                 : 'text-[#45464d] hover:bg-[#eff4ff] hover:text-[#0b1c30]'
             }`}
           >
-            <span>{seg.label === 'All' ? 'All Patients' : seg.label}</span>
+            <span>{seg.label === 'All' ? 'คนไข้ทั้งหมด' : seg.label}</span>
             <span className={`px-1.5 py-0.5 rounded-full text-[11px] ${
               activeSegment === seg.label
                 ? 'bg-white/20 text-white'
@@ -157,7 +169,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
             </span>
             <input
               type="text"
-              placeholder="Search by Name, HN, Nickname, Phone, Doctor, or Tag..."
+              placeholder="ค้นหาด้วยชื่อ, HN, ชื่อเล่น, เบอร์โทร หรือแพทย์..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full h-10 pl-9 pr-3 rounded-lg bg-[#eff4ff] border border-transparent focus:border-[#006a61] focus:bg-white text-[13px] text-[#0b1c30] placeholder:text-[#76777d] outline-none transition-all"
@@ -174,20 +186,20 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
               }`}
             >
               <span className="material-symbols-outlined text-[18px]">tune</span>
-              <span>Filter Matrix</span>
+              <span>ตัวกรอง</span>
             </button>
 
             {selectedIds.length > 0 && (
               <div className="flex items-center gap-2 animate-in fade-in">
                 <span className="text-[12px] font-semibold text-[#006a61] bg-[#86f2e4]/30 px-2.5 py-1 rounded-lg">
-                  {selectedIds.length} Selected
+                  เลือก {selectedIds.length} ราย
                 </span>
                 <button
-                  onClick={() => onOpenBroadcastModal(`${selectedIds.length} Selected Patients`, selectedIds.length)}
+                  onClick={() => onOpenBroadcastModal(`คนไข้ที่เลือก ${selectedIds.length} ราย`, selectedIds.length)}
                   className="px-3 py-1.5 rounded-lg bg-[#00b900] text-white text-[12px] font-semibold hover:bg-[#00a000] flex items-center gap-1 shadow-xs"
                 >
                   <span className="material-symbols-outlined text-[16px]">chat</span>
-                  <span>Batch LINE</span>
+                  <span>ส่ง LINE หลายคน</span>
                 </button>
               </div>
             )}
@@ -198,13 +210,13 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
         {showAdvancedFilters && (
           <div className="pt-3 border-t border-[#c6c6cd]/30 grid grid-cols-1 sm:grid-cols-3 gap-4 text-[12px] animate-in slide-in-from-top-2 duration-150">
             <div>
-              <label className="block font-semibold text-[#0b1c30] mb-1">Attending Specialist Doctor</label>
+              <label className="block font-semibold text-[#0b1c30] mb-1">แพทย์ผู้ดูแล</label>
               <select
                 value={doctorFilter}
                 onChange={e => setDoctorFilter(e.target.value)}
                 className="w-full h-9 px-2 rounded-lg bg-[#eff4ff] border border-[#c6c6cd]/40 text-[#0b1c30] outline-none"
               >
-                <option value="All">All Specialist Doctors</option>
+                <option value="All">แพทย์ทุกท่าน</option>
                 <option value="Dr. Kornvipa">Dr. Kornvipa (Dermatology & Laser)</option>
                 <option value="Dr. Vorapat">Dr. Vorapat (Plastic Surgery)</option>
               </select>
@@ -212,7 +224,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
 
             <div>
               <label className="block font-semibold text-[#0b1c30] mb-1">
-                Minimum LTV (฿{minSpend.toLocaleString()})
+                LTV ขั้นต่ำ (฿{minSpend.toLocaleString()})
               </label>
               <input
                 type="range"
@@ -234,7 +246,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                 }}
                 className="text-[12px] text-[#ba1a1a] hover:underline font-semibold"
               >
-                Reset All Filter Parameters
+                ล้างตัวกรองทั้งหมด
               </button>
             </div>
           </div>
@@ -255,13 +267,13 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                     className="rounded border-[#c6c6cd] text-[#006a61] focus:ring-0"
                   />
                 </th>
-                <th className="py-3 px-4">Patient & Identifier</th>
-                <th className="py-3 px-3">RFM Segment & Score</th>
-                <th className="py-3 px-3">Lifetime Value (LTV)</th>
-                <th className="py-3 px-3">Last Visit & Recency</th>
-                <th className="py-3 px-3">Active Protocol & Decay</th>
-                <th className="py-3 px-3">Preferred Channel</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4">คนไข้</th>
+                <th className="py-3 px-3">กลุ่ม & คะแนน RFM</th>
+                <th className="py-3 px-3">ยอดสะสม (LTV)</th>
+                <th className="py-3 px-3">มาครั้งล่าสุด</th>
+                <th className="py-3 px-3">สถานะ Treatment</th>
+                <th className="py-3 px-3">ช่องทางติดต่อ</th>
+                <th className="py-3 px-4 text-right">จัดการ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#c6c6cd]/25 text-[13px]">
@@ -300,20 +312,20 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-[#dce9ff] flex items-center justify-center font-bold text-[#006a61] text-[13px] shrink-0">
-                            {p.name.slice(5, 7) || 'VIP'}
+                            {initials(p.name)}
                           </div>
                         )}
                         <div>
-                          <div className="font-['Plus_Jakarta_Sans'] font-semibold text-[#0b1c30] flex items-center gap-1.5 leading-snug">
+                          <div className="font-display font-semibold text-[#0b1c30] flex items-center gap-1.5 leading-snug">
                             <span>{p.name}</span>
                             <span className="text-[11px] font-normal text-[#45464d]">
-                              ({p.nickname})
+                              {p.nickname && `(${p.nickname})`}
                             </span>
                           </div>
                           <div className="text-[11px] text-[#45464d] flex items-center gap-1.5 mt-0.5">
                             <span className="font-mono text-[#006a61] font-semibold">HN: {p.hn}</span>
                             <span>•</span>
-                            <span>{p.age}y</span>
+                            <span>{p.age ? `${p.age} ปี` : 'ไม่ระบุอายุ'}</span>
                             <span>•</span>
                             <span>{p.gender}</span>
                           </div>
@@ -344,11 +356,11 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                     {/* LTV */}
                     <td className="py-3.5 px-3">
                       <div>
-                        <span className="font-['Plus_Jakarta_Sans'] font-bold text-[#0b1c30]">
+                        <span className="font-display font-bold text-[#0b1c30]">
                           ฿{(p.lifetimeValue).toLocaleString()}
                         </span>
                         <div className="text-[11px] text-[#45464d]">
-                          12M: ฿{(p.trailing12M).toLocaleString()}
+                          12 เดือน: ฿{(p.trailing12M).toLocaleString()}
                         </div>
                       </div>
                     </td>
@@ -358,7 +370,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                       <div>
                         <span className="font-medium text-[#0b1c30]">{p.lastVisitDate}</span>
                         <div className="text-[11px] text-[#ba1a1a] font-medium">
-                          {p.lastVisitRecencyDays}d ago
+                          {p.lastVisitRecencyDays} วันก่อน
                         </div>
                       </div>
                     </td>
@@ -370,7 +382,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                           {p.priorityReason}
                         </span>
                         <span className="text-[11px] text-[#45464d]">
-                          Doctor: {p.attendingDoctor.replace('Dr. ', '')}
+                          แพทย์: {p.attendingDoctor.replace('Dr. ', '')}
                         </span>
                       </div>
                     </td>
@@ -388,7 +400,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => onOpenLineChat(p)}
-                          title="LINE OA Message"
+                          title="ส่งข้อความ LINE OA"
                           className="w-8 h-8 rounded-lg bg-[#00b900]/10 hover:bg-[#00b900]/20 text-[#00a000] flex items-center justify-center transition-colors"
                         >
                           <span className="material-symbols-outlined text-[17px]">chat</span>
@@ -401,7 +413,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
                           }}
                           className="px-2.5 py-1.5 rounded-lg bg-[#131b2e] hover:bg-black text-white text-[11px] font-semibold flex items-center gap-1 transition-transform active:scale-95 shadow-xs"
                         >
-                          <span>Dossier</span>
+                          <span>โปรไฟล์</span>
                           <span className="material-symbols-outlined text-[14px]">visibility</span>
                         </button>
                       </div>
@@ -415,28 +427,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
 
         {/* Table footer pagination */}
         <div className="p-4 border-t border-[#c6c6cd]/30 bg-[#eff4ff]/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-[#45464d]">
-          <span>Showing 1–{filteredPatients.length} of 1,482 Patients</span>
-          <div className="flex items-center gap-1">
-            <button className="px-2.5 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30] font-medium disabled:opacity-50">
-              Previous
-            </button>
-            <button className="px-3 py-1 rounded bg-[#131b2e] text-white font-semibold">
-              1
-            </button>
-            <button className="px-3 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30]">
-              2
-            </button>
-            <button className="px-3 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30]">
-              3
-            </button>
-            <span className="px-1 text-[#76777d]">...</span>
-            <button className="px-3 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30]">
-              149
-            </button>
-            <button className="px-2.5 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30] font-medium">
-              Next
-            </button>
-          </div>
+          <span>แสดง {filteredPatients.length} จาก {patients.length.toLocaleString()} ราย</span>
         </div>
       </div>
     </div>

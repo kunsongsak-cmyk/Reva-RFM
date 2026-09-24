@@ -23,23 +23,23 @@ export const Header: React.FC<HeaderProps> = ({
   const notifications = [
     {
       id: '1',
-      title: 'Lifting Recall Overdue',
-      desc: 'Khun Ananya S. is 37 days overdue for Oligio X recall.',
-      time: '10m ago',
+      title: 'เลยรอบ Lifting',
+      desc: 'Khun Ananya S. เลยรอบนัด Oligio X มา 37 วัน',
+      time: '10 นาทีที่แล้ว',
       urgent: true
     },
     {
       id: '2',
-      title: 'LINE OA Read Confirmation',
-      desc: 'Khun Ploypailin T. read personalized protocol follow-up.',
-      time: '34m ago',
+      title: 'อ่านข้อความ LINE OA แล้ว',
+      desc: 'Khun Ploypailin T. อ่านข้อความติดตามผลแล้ว',
+      time: '34 นาทีที่แล้ว',
       urgent: false
     },
     {
       id: '3',
-      title: 'Booking Milestone Achieved',
-      desc: 'Daily booking target reached 80% (12 / 15 bookings).',
-      time: '1h ago',
+      title: 'ยอดจองใกล้ถึงเป้า',
+      desc: 'ยอดจองวันนี้ถึง 80% ของเป้า (12 / 15 นัด)',
+      time: '1 ชม.ที่แล้ว',
       urgent: false
     }
   ];
@@ -56,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="material-symbols-outlined text-[18px] text-[#006a61]">
               domain
             </span>
-            <span className="font-['Inter'] text-[13px] font-semibold">
+            <span className="font-sans text-[13px] font-semibold">
               {branch}
             </span>
             <span className="material-symbols-outlined text-[16px] text-[#45464d]">
@@ -89,9 +89,9 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        <div className="hidden xl:flex items-center gap-2 text-[#45464d] font-['Inter'] text-[13px]">
+        <div className="hidden xl:flex items-center gap-2 text-[#45464d] font-sans text-[13px]">
           <span className="material-symbols-outlined text-[16px]">calendar_today</span>
-          <span>Thursday, 24 September 2026</span>
+          <span>{new Date().toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
         </div>
       </div>
 
@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <div className="flex items-center gap-2 text-[13px] truncate">
               <span className="material-symbols-outlined text-[18px]">search</span>
-              <span className="text-[#76777d]">Search VIP dossier, phone, cycle...</span>
+              <span className="text-[#76777d]">ค้นหาชื่อคนไข้, HN, เบอร์โทร...</span>
             </div>
             <kbd className="px-1.5 py-0.5 rounded bg-[#d3e4fe] border border-[#c6c6cd] text-[10px] font-semibold text-[#45464d] shrink-0 font-mono">
               ⌘K
@@ -120,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => setShowNotifications(!showNotifications)}
             className="relative p-2 rounded-lg text-[#45464d] hover:bg-[#e5eeff] hover:text-[#0b1c30] transition-colors"
-            title="Clinical Notifications"
+            title="การแจ้งเตือน"
           >
             <span className="material-symbols-outlined text-[20px]">notifications</span>
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ba1a1a] ring-2 ring-white animate-pulse"></span>
@@ -129,8 +129,8 @@ export const Header: React.FC<HeaderProps> = ({
           {showNotifications && (
             <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-[#c6c6cd]/40 p-3 z-50 animate-in fade-in zoom-in-95 duration-100">
               <div className="flex items-center justify-between pb-2 border-b border-[#c6c6cd]/30 mb-2">
-                <span className="text-[13px] font-semibold text-[#0b1c30]">Clinical Alerts</span>
-                <span className="text-[11px] text-[#006a61] font-semibold cursor-pointer hover:underline">Mark all read</span>
+                <span className="text-[13px] font-semibold text-[#0b1c30]">การแจ้งเตือน</span>
+                <span className="text-[11px] text-[#006a61] font-semibold cursor-pointer hover:underline">อ่านทั้งหมดแล้ว</span>
               </div>
               <div className="space-y-2">
                 {notifications.map(n => (
@@ -152,11 +152,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* User Chip */}
         <div className="flex items-center gap-3 pl-1">
           <div className="text-right hidden sm:block">
-            <div className="font-['Inter'] text-[13px] font-semibold text-[#0b1c30] leading-snug">
+            <div className="font-sans text-[13px] font-semibold text-[#0b1c30] leading-snug">
               May
             </div>
-            <div className="font-['Inter'] text-[11px] text-[#45464d] leading-none">
-              Senior CRM Consultant
+            <div className="font-sans text-[11px] text-[#45464d] leading-none">
+              ที่ปรึกษาอาวุโส
             </div>
           </div>
           <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-semibold text-[13px] shadow-xs">

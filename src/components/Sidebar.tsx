@@ -1,17 +1,25 @@
 import React from 'react';
-import { ScreenType, PatientCategory } from '../types';
+import { ScreenType, PatientCategory, Patient } from '../types';
+import { isDueSoon, isOverdue, needsFollowUp } from '../lib/rfm';
 
 interface SidebarProps {
+  patients: Patient[];
   currentScreen: ScreenType;
   onNavigate: (screen: ScreenType, categoryFilter?: PatientCategory) => void;
   selectedCategory?: PatientCategory;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
+  patients,
   currentScreen,
   onNavigate,
   selectedCategory
 }) => {
+  const countOf = (c: PatientCategory) => patients.filter(p => p.category === c).length;
+  const queueCount = patients.filter(needsFollowUp).length;
+  const overdueCount = patients.filter(isOverdue).length;
+  const upcomingCount = patients.filter(p => !isOverdue(p) && isDueSoon(p, 30)).length;
+
   return (
     <aside className="fixed left-0 top-0 h-full w-72 bg-white border-r border-[#c6c6cd]/40 z-50 flex flex-col justify-between select-none">
       <div className="flex flex-col flex-1 overflow-y-auto">
@@ -24,11 +32,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span className="material-symbols-outlined text-[20px]">spa</span>
           </div>
           <div className="flex flex-col">
-            <span className="font-['Plus_Jakarta_Sans'] font-semibold text-[18px] tracking-tight text-[#0b1c30] leading-none">
-              Aura Prestige
+            <span className="font-display font-semibold text-[18px] tracking-tight text-[#0b1c30] leading-none">
+              Reva Aesthetic
             </span>
-            <span className="font-['Inter'] text-[11px] font-medium uppercase tracking-widest text-[#45464d] mt-0.5">
-              Clinic · CRM
+            <span className="font-sans text-[11px] font-medium uppercase tracking-widest text-[#45464d] mt-0.5">
+              Clinic · Bangkok
             </span>
           </div>
         </div>
@@ -36,8 +44,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Navigation Sections */}
         <div className="px-4 py-3">
           {/* Section 1: Clinical Operations */}
-          <div className="px-2 py-1 font-['Inter'] text-[11px] font-medium text-[#45464d] uppercase tracking-wider">
-            Clinical Operations
+          <div className="px-2 py-1 font-sans text-[11px] font-medium text-[#45464d] uppercase tracking-wider">
+            งานประจำวัน
           </div>
           <nav className="space-y-1 mt-1">
             {/* Today's Queue */}
@@ -51,14 +59,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-[18px]">view_timeline</span>
-                <span className="text-[14px]">Today's Queue</span>
+                <span className="text-[14px]">คิวติดตามวันนี้</span>
               </div>
               <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                 currentScreen === 'todays-queue'
                   ? 'bg-[#006a61] text-white'
                   : 'bg-[#006a61] text-white'
               }`}>
-                18
+                {queueCount}
               </span>
             </button>
 
@@ -73,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-[18px]">person_search</span>
-                <span className="text-[14px]">Patients</span>
+                <span className="text-[14px]">คนไข้ทั้งหมด</span>
               </div>
             </button>
 
@@ -91,7 +99,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span className="w-1.5 h-1.5 rounded-full bg-[#006a61]"></span>
                   Champions
                 </span>
-                <span className="text-[11px] font-medium text-[#45464d]">142</span>
+                <span className="text-[11px] font-medium text-[#45464d]">{countOf('Champions')}</span>
               </button>
 
               <button
@@ -104,9 +112,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 <span className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#565e74]"></span>
-                  Loyal Patients
+                  Loyal VIPs
                 </span>
-                <span className="text-[11px] font-medium text-[#45464d]">389</span>
+                <span className="text-[11px] font-medium text-[#45464d]">{countOf('Loyal VIPs')}</span>
               </button>
 
               <button
@@ -121,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span className="w-1.5 h-1.5 rounded-full bg-[#c76c00]"></span>
                   At Risk
                 </span>
-                <span className="text-[11px] font-semibold text-[#ba1a1a]">64</span>
+                <span className="text-[11px] font-semibold text-[#ba1a1a]">{countOf('At Risk')}</span>
               </button>
 
               <button
@@ -136,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span className="w-1.5 h-1.5 rounded-full bg-[#76777d]"></span>
                   Lost / Inactive
                 </span>
-                <span className="text-[11px] font-medium text-[#45464d]">112</span>
+                <span className="text-[11px] font-medium text-[#45464d]">{countOf('Lost / Inactive')}</span>
               </button>
             </div>
 
@@ -152,10 +160,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 <div className="flex items-center gap-2.5">
                   <span className="material-symbols-outlined text-[18px]">event_repeat</span>
-                  <span className="text-[14px]">Follow-up</span>
+                  <span className="text-[14px]">ติดตามคนไข้</span>
                 </div>
                 <span className="px-2 py-0.5 rounded-full bg-[#ffdad6] text-[#93000a] text-[11px] font-semibold">
-                  9
+                  {overdueCount}
                 </span>
               </button>
 
@@ -164,22 +172,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => onNavigate('todays-queue')}
                   className="w-full flex items-center justify-between px-2.5 py-1 rounded text-[13px] text-[#45464d] hover:bg-[#e5eeff]/60 hover:text-[#0b1c30]"
                 >
-                  <span>Today Schedule</span>
-                  <span className="text-[11px] font-semibold text-[#006a61]">12</span>
+                  <span>ต้องติดตามด่วน</span>
+                  <span className="text-[11px] font-semibold text-[#006a61]">{queueCount}</span>
                 </button>
                 <button
                   onClick={() => onNavigate('todays-queue')}
                   className="w-full flex items-center justify-between px-2.5 py-1 rounded text-[13px] text-[#45464d] hover:bg-[#e5eeff]/60 hover:text-[#0b1c30]"
                 >
-                  <span>Overdue Milestones</span>
-                  <span className="text-[11px] font-semibold text-[#ba1a1a]">9</span>
+                  <span>เลยกำหนดนัด</span>
+                  <span className="text-[11px] font-semibold text-[#ba1a1a]">{overdueCount}</span>
                 </button>
                 <button
                   onClick={() => onNavigate('todays-queue')}
                   className="w-full flex items-center justify-between px-2.5 py-1 rounded text-[13px] text-[#45464d] hover:bg-[#e5eeff]/60 hover:text-[#0b1c30]"
                 >
-                  <span>Upcoming Cycles</span>
-                  <span className="text-[11px] text-[#45464d]">28</span>
+                  <span>ใกล้ถึงรอบ</span>
+                  <span className="text-[11px] text-[#45464d]">{upcomingCount}</span>
                 </button>
               </div>
             </div>
@@ -195,15 +203,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-[18px]">vital_signs</span>
-                <span className="text-[14px]">Treatment Cycles</span>
+                <span className="text-[14px]">รอบ Treatment</span>
               </div>
             </button>
           </nav>
 
           {/* Section 2: Retention Intelligence */}
           <div className="mt-4 pt-3 border-t border-[#c6c6cd]/30">
-            <div className="px-2 py-1 font-['Inter'] text-[11px] font-medium text-[#45464d] uppercase tracking-wider">
-              Retention Intelligence
+            <div className="px-2 py-1 font-sans text-[11px] font-medium text-[#45464d] uppercase tracking-wider">
+              วิเคราะห์การกลับมาใช้บริการ
             </div>
             <nav className="space-y-1 mt-1">
               <button
@@ -216,7 +224,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 <div className="flex items-center gap-2.5">
                   <span className="material-symbols-outlined text-[18px]">insights</span>
-                  <span className="text-[14px]">Analytics</span>
+                  <span className="text-[14px]">รายงานวิเคราะห์</span>
                 </div>
               </button>
 
@@ -225,13 +233,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => onNavigate('analytics')}
                   className="w-full text-left px-2.5 py-1 rounded text-[13px] text-[#45464d] hover:bg-[#e5eeff]/60 hover:text-[#0b1c30]"
                 >
-                  RFM & Retention Matrix
+                  RFM & Retention
                 </button>
                 <button
                   onClick={() => onNavigate('analytics')}
                   className="w-full text-left px-2.5 py-1 rounded text-[13px] text-[#45464d] hover:bg-[#e5eeff]/60 hover:text-[#0b1c30]"
                 >
-                  Sales & Recur Performance
+                  ผลงานทีมขาย
                 </button>
               </div>
 
@@ -246,7 +254,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 <div className="flex items-center gap-2.5">
                   <span className="material-symbols-outlined text-[18px]">tune</span>
-                  <span className="text-[14px]">Settings</span>
+                  <span className="text-[14px]">ตั้งค่า</span>
                 </div>
               </button>
             </nav>
@@ -259,11 +267,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-2.5 rounded-lg bg-white border border-[#c6c6cd]/40 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#006a61] animate-pulse"></span>
-            <span className="font-['Inter'] text-[11px] font-semibold text-[#0b1c30]">
-              CRM Engine Active
+            <span className="font-sans text-[11px] font-semibold text-[#0b1c30]">
+              ระบบ CRM ทำงานอยู่
             </span>
           </div>
-          <span className="font-['Inter'] text-[11px] text-[#45464d] font-mono">
+          <span className="font-sans text-[11px] text-[#45464d] font-mono">
             v4.8
           </span>
         </div>

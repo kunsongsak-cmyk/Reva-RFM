@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 
+const TEMPLATES: Record<string, string> = {
+  'oligio-recall': 'สวัสดีค่ะ คุณ[CustomerName] ถึงรอบยกกระชับประจำปีแล้วค่ะ ทีมแพทย์ Reva Aesthetic Clinic เตรียมสิทธิพิเศษไว้ให้ จองภายใน 30 ก.ย. รับ Exosome Skin Infusion ฟรีค่ะ',
+  'botox': 'สวัสดีค่ะ คุณ[CustomerName] ใกล้ถึงรอบ Botox แล้วค่ะ จองคิวกับคุณหมอภายในสัปดาห์นี้ เพื่อให้กรอบหน้าคมชัดต่อเนื่องนะคะ',
+  'vip-anniversary': 'สวัสดีค่ะ คุณ[CustomerName] ขอบคุณที่ไว้วางใจ Reva Aesthetic Clinic มาตลอดค่ะ เดือนนี้เรามีสิทธิพิเศษสำหรับลูกค้า VIP โดยเฉพาะ สนใจสอบถามได้เลยค่ะ'
+};
+
 interface BroadcastModalProps {
   onClose: () => void;
   targetCohort: string;
@@ -13,7 +19,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({
 }) => {
   const [template, setTemplate] = useState('oligio-recall');
   const [message, setMessage] = useState(
-    'Sawadee ka [CustomerName]! Dr. Kornvipa and the clinical team at Aura Prestige Thonglor have prepared your annual collagen recall privilege. Book before Sept 30 to receive complimentary Exosome Skin Infusion.'
+    TEMPLATES['oligio-recall']
   );
   const [sent, setSent] = useState(false);
 
@@ -34,11 +40,11 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({
               <span className="material-symbols-outlined text-[20px]">campaign</span>
             </div>
             <div>
-              <h3 className="font-['Plus_Jakarta_Sans'] font-semibold text-[16px] text-[#0b1c30]">
-                Broadcast Targeted Concierge Campaign
+              <h3 className="font-display font-semibold text-[16px] text-[#0b1c30]">
+                ส่งข้อความถึงกลุ่มคนไข้
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                Target: {targetCohort} ({count.toLocaleString()} VIP patients)
+                กลุ่ม: {targetCohort} ({count.toLocaleString()} ราย)
               </p>
             </div>
           </div>
@@ -55,38 +61,34 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({
             <div className="w-14 h-14 rounded-full bg-emerald-100 text-[#006a61] flex items-center justify-center mx-auto animate-bounce">
               <span className="material-symbols-outlined text-[32px]">task_alt</span>
             </div>
-            <h4 className="text-[16px] font-bold text-[#0b1c30]">Broadcast Dispatched!</h4>
+            <h4 className="text-[16px] font-bold text-[#0b1c30]">ส่งข้อความแล้ว!</h4>
             <p className="text-[13px] text-[#45464d]">
-              Delivering to {count.toLocaleString()} LINE OA verified patient threads via Thonglor API gateway.
+              กำลังส่งถึงคนไข้ {count.toLocaleString()} รายผ่าน LINE OA
             </p>
           </div>
         ) : (
           <div className="p-5 space-y-4">
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Campaign Template
+                เลือกเทมเพลต
               </label>
               <select
                 value={template}
                 onChange={e => {
                   setTemplate(e.target.value);
-                  if (e.target.value === 'botox') {
-                    setMessage('Sawadee ka [CustomerName]! Your neurotoxin maintenance milestone is approaching. Reserve your preferred slot with Dr. Kornvipa this week to preserve peak contour definition.');
-                  } else {
-                    setMessage('Sawadee ka [CustomerName]! Dr. Kornvipa and the clinical team at Aura Prestige Thonglor have prepared your annual collagen recall privilege. Book before Sept 30 to receive complimentary Exosome Skin Infusion.');
-                  }
+                  setMessage(TEMPLATES[e.target.value]);
                 }}
                 className="w-full h-10 px-3 rounded-lg bg-[#eff4ff] border border-[#c6c6cd]/40 text-[13px] text-[#0b1c30] outline-none focus:border-[#006a61]"
               >
-                <option value="oligio-recall">Annual Lifting Maintenance (Oligio X / Ulthera Recall)</option>
-                <option value="botox">Quarterly Neurotoxin (Botox / Dysport Milestone)</option>
-                <option value="vip-anniversary">VIP Anniversary Platinum Invitation</option>
+                <option value="oligio-recall">ยกกระชับประจำปี (Oligio X / Ulthera)</option>
+                <option value="botox">Botox / Dysport ทุก 3-4 เดือน</option>
+                <option value="vip-anniversary">สิทธิพิเศษลูกค้า VIP</option>
               </select>
             </div>
 
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Personalized Message (LINE OA Official)
+                ข้อความ (LINE OA)
               </label>
               <textarea
                 rows={4}
@@ -99,9 +101,9 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({
             <div className="p-3 bg-[#e5eeff] rounded-xl flex items-center justify-between text-[12px] text-[#0b1c30]">
               <span className="flex items-center gap-1.5 font-medium">
                 <span className="material-symbols-outlined text-[16px] text-[#006a61]">schedule_send</span>
-                Smart Send Window: 13:00 - 15:00
+                ช่วงเวลาส่ง: 13:00 - 15:00
               </span>
-              <span className="font-semibold text-[#006a61]">Est. Open Rate ~82%</span>
+              <span className="font-semibold text-[#006a61]">คาดว่าเปิดอ่าน ~82%</span>
             </div>
 
             <div className="pt-2 flex items-center justify-end gap-2">
@@ -110,7 +112,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({
                 onClick={onClose}
                 className="px-4 py-2 text-[13px] rounded-lg text-[#45464d] hover:bg-slate-100"
               >
-                Cancel
+                ยกเลิก
               </button>
               <button
                 type="button"
@@ -118,7 +120,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({
                 className="px-4 py-2 bg-[#00b900] hover:bg-[#009b00] text-white font-semibold text-[13px] rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
               >
                 <span className="material-symbols-outlined text-[16px]">send</span>
-                <span>Send to {count.toLocaleString()} Patients</span>
+                <span>ส่งถึง {count.toLocaleString()} ราย</span>
               </button>
             </div>
           </div>

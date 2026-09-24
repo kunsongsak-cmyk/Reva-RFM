@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Patient } from '../../types';
+import { PatientRecord } from '../../types';
 
 interface NewPatientModalProps {
   onClose: () => void;
-  onPatientAdded: (patient: Partial<Patient>) => void;
+  onPatientAdded: (patient: Partial<PatientRecord>) => void;
 }
 
 export const NewPatientModal: React.FC<NewPatientModalProps> = ({
@@ -38,49 +38,29 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
       attendingDoctor: 'Dr. Kornvipa',
       doctorSpecialty: 'Dermatology & Laser',
       branch: 'Thonglor Flagship',
-      category: 'New Patients',
-      tier: 'Onboarding Cohort',
-      priorityScore: 75,
-      priorityLevel: 'High',
-      priorityReason: 'New Intake Consultation Scheduled',
-      lifetimeValue: 0,
-      trailing12M: 0,
-      avgTicket: 0,
-      completedVisits: 0,
-      lastVisitRecencyDays: 0,
-      lastVisitDate: 'Today (Intake)',
-      rfmScore: {
-        recencyScore: 5,
-        frequencyScore: 1,
-        monetaryScore: 1,
-        recencyLabel: 'Brand new onboarding patient profile.',
-        frequencyLabel: '0 completed procedures.',
-        monetaryLabel: '฿0 initial spend.',
-        matrixVerdit: 'Newly registered VIP prospect requiring concierge welcome.'
-      },
+      tier: 'คนไข้ใหม่',
       signals: [
         {
-          title: 'Initial Intake Protocol',
-          description: `Primary clinical interest: ${primaryInterest}`,
+          title: 'คนไข้ใหม่',
+          description: `สนใจ: ${primaryInterest}`,
           icon: 'spa',
           iconColor: 'text-secondary'
         }
       ],
       recommendedProposal: {
-        title: `${primaryInterest} - Initial Diagnostic Scan & Consultation`,
-        subtitle: 'Includes 3D Visia Complexion Analysis',
+        title: `${primaryInterest} - ปรึกษาแพทย์และวิเคราะห์ผิว`,
+        subtitle: 'รวมสแกนผิวด้วย VISIA',
         offerAttached: true
       },
-      cycles: [],
       treatments: [],
       timeline: [
         {
           id: `ev-${Date.now()}`,
-          title: 'Patient Intake Registered',
-          timestamp: 'Today, Just now',
+          title: 'ลงทะเบียนคนไข้ใหม่',
+          timestamp: 'วันนี้ เมื่อสักครู่',
           icon: 'person_add',
           iconBg: 'bg-secondary text-white',
-          description: 'Profile created by Khun May via VIP reception desk.'
+          description: 'สร้างโปรไฟล์โดย คุณ May ที่เคาน์เตอร์ต้อนรับ'
         }
       ]
     });
@@ -96,11 +76,11 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
               <span className="material-symbols-outlined text-[20px]">person_add</span>
             </div>
             <div>
-              <h3 className="font-['Plus_Jakarta_Sans'] font-semibold text-[16px] text-[#0b1c30]">
-                New Patient VIP Intake
+              <h3 className="font-display font-semibold text-[16px] text-[#0b1c30]">
+                ลงทะเบียนคนไข้ใหม่
               </h3>
               <p className="text-[12px] text-[#45464d]">
-                Thonglor Flagship Suite • Clinical Reception
+                Reva Aesthetic Clinic • เคาน์เตอร์ต้อนรับ
               </p>
             </div>
           </div>
@@ -117,12 +97,12 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Full Name (Khun...) *
+                ชื่อ-นามสกุล *
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Khun Nattaporn W."
+                placeholder="เช่น Khun Nattaporn W."
                 value={name}
                 onChange={e => setName(e.target.value)}
                 className="w-full h-10 px-3 rounded-lg bg-[#eff4ff] border border-[#c6c6cd]/40 text-[13px] text-[#0b1c30] outline-none focus:border-[#006a61]"
@@ -130,11 +110,11 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
             </div>
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Nickname
+                ชื่อเล่น
               </label>
               <input
                 type="text"
-                placeholder="e.g. แนน"
+                placeholder="เช่น แนน"
                 value={nickname}
                 onChange={e => setNickname(e.target.value)}
                 className="w-full h-10 px-3 rounded-lg bg-[#eff4ff] border border-[#c6c6cd]/40 text-[13px] text-[#0b1c30] outline-none focus:border-[#006a61]"
@@ -145,7 +125,7 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Age
+                อายุ
               </label>
               <input
                 type="number"
@@ -156,16 +136,16 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
             </div>
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Gender
+                เพศ
               </label>
               <select
                 value={gender}
                 onChange={e => setGender(e.target.value)}
                 className="w-full h-10 px-3 rounded-lg bg-[#eff4ff] border border-[#c6c6cd]/40 text-[13px] text-[#0b1c30] outline-none focus:border-[#006a61]"
               >
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-                <option value="Non-binary">Non-binary</option>
+                <option value="Female">หญิง</option>
+                <option value="Male">ชาย</option>
+                <option value="Non-binary">ไม่ระบุ</option>
               </select>
             </div>
           </div>
@@ -173,7 +153,7 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                Phone Number
+                เบอร์โทรศัพท์
               </label>
               <input
                 type="tel"
@@ -184,7 +164,7 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
             </div>
             <div>
               <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                LINE OA Handle
+                LINE ID
               </label>
               <input
                 type="text"
@@ -197,7 +177,7 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
 
           <div>
             <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-              Primary Concern / Interest
+              ปัญหาผิว / สิ่งที่สนใจ
             </label>
             <select
               value={primaryInterest}
@@ -218,14 +198,14 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 text-[13px] rounded-lg text-[#45464d] hover:bg-slate-100"
             >
-              Cancel
+              ยกเลิก
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-black hover:bg-slate-900 text-white font-semibold text-[13px] rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
             >
               <span className="material-symbols-outlined text-[16px]">add_circle</span>
-              <span>Register Patient</span>
+              <span>ลงทะเบียน</span>
             </button>
           </div>
         </form>

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { ScreenType, Patient, PatientCategory } from './types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ScreenType, Patient, PatientCategory, PatientRecord, RfmSettings } from './types';
 import { INITIAL_PATIENTS } from './data/mockData';
+import { DEFAULT_RFM_SETTINGS, enrichPatient } from './lib/rfm';
+import { mergeRecords } from './lib/importer';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { TodaysQueueScreen } from './components/TodaysQueueScreen';
@@ -18,11 +20,31 @@ import { NewPatientModal } from './components/modals/NewPatientModal';
 import { CommandPalette } from './components/modals/CommandPalette';
 import { BroadcastModal } from './components/modals/BroadcastModal';
 import { WeeklyBriefModal } from './components/modals/WeeklyBriefModal';
+import { ImportModal, ImportMode } from './components/modals/ImportModal';
+
+const SETTINGS_KEY = 'reva-rfm-settings';
+
+function loadSettings(): RfmSettings {
+  try {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    if (saved) return { ...DEFAULT_RFM_SETTINGS, ...JSON.parse(saved) };
+  } catch {
+    // Storage unavailable or corrupt: fall back to defaults
+  }
+  return DEFAULT_RFM_SETTINGS;
+}
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('todays-queue');
-  const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
-  const [selectedPatient, setSelectedPatient] = useState<Patient>(INITIAL_PATIENTS[0]);
+  const [records, setRecords] = useState<PatientRecord[]>(INITIAL_PATIENTS);
+  const [rfmSettings, setRfmSettings] = useState<RfmSettings>(loadSettings);
+  const patients = useMemo(
+    () => records.map(r => enrichPatient(r, rfmSettings)).sort((a, b) => b.priorityScore - a.priorityScore),
+    [records, rfmSettings]
+  );
+  const [selectedPatientId, setSelectedPatientId] = useState<string>(patients[0].id);
+  const selectedPatient = patients.find(p => p.id === selectedPatientId) ?? patients[0];
+  const setSelectedPatient = (p: Patient) => setSelectedPatientId(p.id);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<PatientCategory | undefined>(undefined);
   const [branch, setBranch] = useState('Thonglor Flagship');
 
@@ -33,6 +55,7 @@ export default function App() {
   const [isNewPatientOpen, setIsNewPatientOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isWeeklyBriefOpen, setIsWeeklyBriefOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [broadcastConfig, setBroadcastConfig] = useState<{ isOpen: boolean; cohort: string; count: number }>({
     isOpen: false,
     cohort: '',
@@ -67,15 +90,31 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleUpdatePatient = (updated: Patient) => {
-    setPatients(prev => prev.map(p => (p.id === updated.id ? updated : p)));
-    if (selectedPatient.id === updated.id) {
-      setSelectedPatient(updated);
-    }
+  const handleUpdatePatient = (updated: PatientRecord) => {
+    setRecords(prev => prev.map(p => (p.id === updated.id ? updated : p)));
   };
 
-  const handlePatientAdded = (newP: Partial<Patient>) => {
-    const fullPatient: Patient = {
+  const handleImport = (imported: PatientRecord[], mode: ImportMode) => {
+    const next = mode === 'replace' ? imported : mergeRecords(records, imported);
+    setRecords(next);
+    if (mode === 'replace') setSelectedPatientId(next[0].id);
+    setIsImportOpen(false);
+    showToast(`นำเข้าข้อมูลคนไข้ ${imported.length.toLocaleString()} รายเรียบร้อย`);
+    handleNavigate('patients');
+  };
+
+  const handleSaveSettings = (next: RfmSettings) => {
+    setRfmSettings(next);
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+    } catch {
+      // Settings still apply for this session
+    }
+    showToast('บันทึกเกณฑ์ RFM แล้ว คำนวณคะแนนใหม่ทั้งหมดเรียบร้อย');
+  };
+
+  const handlePatientAdded = (newP: Partial<PatientRecord>) => {
+    const fullPatient: PatientRecord = {
       id: `p-${Date.now()}`,
       hn: newP.hn || 'RV099999',
       name: newP.name || 'Khun Customer',
@@ -92,57 +131,17 @@ export default function App() {
       attendingDoctor: 'Dr. Kornvipa',
       doctorSpecialty: 'Dermatology & Laser',
       branch: 'Thonglor Flagship',
-      category: 'New Patients',
-      tier: 'Onboarding Cohort',
-      priorityScore: 75,
-      priorityLevel: 'High',
-      priorityReason: 'New Patient Intake Scheduled',
-      lifetimeValue: 0,
-      trailing12M: 0,
-      avgTicket: 0,
-      completedVisits: 0,
-      lastVisitRecencyDays: 0,
-      lastVisitDate: 'Today (Intake)',
-      rfmScore: {
-        recencyScore: 5,
-        frequencyScore: 1,
-        monetaryScore: 1,
-        recencyLabel: 'Brand new onboarding patient profile.',
-        frequencyLabel: '0 completed procedures.',
-        monetaryLabel: '฿0 initial spend.',
-        matrixVerdit: 'Newly registered VIP prospect requiring concierge welcome.'
-      },
-      signals: [
-        {
-          title: 'Initial Intake Protocol',
-          description: 'Ready for Visia complexion scan and consultation.',
-          icon: 'spa',
-          iconColor: 'text-[#006a61]'
-        }
-      ],
-      recommendedProposal: {
-        title: 'Initial Diagnostic Complexion Scan & Specialist Consultation',
-        subtitle: 'Complimentary welcome package privilege',
-        offerAttached: true
-      },
-      cycles: [],
+      tier: newP.tier || 'คนไข้ใหม่',
+      signals: newP.signals || [],
+      recommendedProposal: newP.recommendedProposal || { title: 'ปรึกษาแพทย์และวิเคราะห์ผิว', subtitle: '' },
       treatments: [],
-      timeline: [
-        {
-          id: `ev-${Date.now()}`,
-          title: 'Patient Intake Registered',
-          timestamp: 'Today, Just now',
-          icon: 'person_add',
-          iconBg: 'bg-[#006a61] text-white',
-          description: 'Profile created by Khun May via VIP reception desk.'
-        }
-      ]
+      timeline: newP.timeline || []
     };
 
-    setPatients(prev => [fullPatient, ...prev]);
-    setSelectedPatient(fullPatient);
+    setRecords(prev => [fullPatient, ...prev]);
+    setSelectedPatientId(fullPatient.id);
     setIsNewPatientOpen(false);
-    showToast(`Registered new patient ${fullPatient.name} (HN: ${fullPatient.hn})`);
+    showToast(`ลงทะเบียนคนไข้ใหม่ ${fullPatient.name} (HN: ${fullPatient.hn}) แล้ว`);
     handleNavigate('patient-detail');
   };
 
@@ -150,12 +149,12 @@ export default function App() {
     if (!bookAppointmentPatient) return;
     const newEvent = {
       id: `ev-${Date.now()}`,
-      title: `Appointment Confirmed: ${details.procedure.split(' - ')[0]}`,
-      timestamp: 'Today, Just now',
+      title: `ยืนยันนัด: ${details.procedure.split(' - ')[0]}`,
+      timestamp: 'วันนี้ เมื่อสักครู่',
       icon: 'event_available',
       iconBg: 'bg-[#006a61] text-white',
-      description: `Reserved on ${details.date} at ${details.time} with ${details.doctor}.`,
-      statusTag: 'Locked in Thonglor Suite 2'
+      description: `นัดวันที่ ${details.date} เวลา ${details.time} กับ ${details.doctor}`,
+      statusTag: 'จองห้องหัตถการแล้ว'
     };
 
     const updated = {
@@ -165,7 +164,7 @@ export default function App() {
 
     handleUpdatePatient(updated);
     setBookAppointmentPatient(null);
-    showToast(`Appointment booked for ${bookAppointmentPatient.name} on ${details.date}`);
+    showToast(`จองนัดให้ ${bookAppointmentPatient.name} วันที่ ${details.date} แล้ว`);
   };
 
   const handleOutcomeSaved = (outcome: {
@@ -178,12 +177,12 @@ export default function App() {
     if (!outcomePatient) return;
     const newEvent = {
       id: `ev-${Date.now()}`,
-      title: `${outcome.outcomeText} via ${outcome.channel.toUpperCase()}`,
-      timestamp: 'Today, Just now',
+      title: `${outcome.outcomeText} ผ่าน ${outcome.channel.toUpperCase()}`,
+      timestamp: 'วันนี้ เมื่อสักครู่',
       icon: outcome.channel === 'line' ? 'chat' : outcome.channel === 'phone' ? 'call' : 'check_circle',
       iconBg: 'bg-[#006a61] text-white',
       description: outcome.notes,
-      statusTag: `Next Follow-up: ${outcome.nextDate}`
+      statusTag: `ติดตามครั้งถัดไป: ${outcome.nextDate}`
     };
 
     const updated = {
@@ -193,19 +192,19 @@ export default function App() {
 
     handleUpdatePatient(updated);
     setOutcomePatient(null);
-    showToast(`Logged outcome for ${outcomePatient.name}`);
+    showToast(`บันทึกผลการติดต่อ ${outcomePatient.name} แล้ว`);
   };
 
   const handleLineMessageSent = (msg: string) => {
     if (!lineChatPatient) return;
     const newEvent = {
       id: `ev-${Date.now()}`,
-      title: 'LINE Concierge Message Sent',
-      timestamp: 'Today, Just now',
+      title: 'ส่งข้อความ LINE แล้ว',
+      timestamp: 'วันนี้ เมื่อสักครู่',
       icon: 'chat',
       iconBg: 'bg-[#00b900] text-white',
-      description: `Khun May sent: "${msg}"`,
-      statusTag: 'Delivered via LINE OA'
+      description: `คุณ May ส่ง: "${msg}"`,
+      statusTag: 'ส่งผ่าน LINE OA'
     };
 
     const updated = {
@@ -214,11 +213,11 @@ export default function App() {
     };
 
     handleUpdatePatient(updated);
-    showToast(`Message sent to ${lineChatPatient.name} via LINE OA`);
+    showToast(`ส่งข้อความถึง ${lineChatPatient.name} ทาง LINE OA แล้ว`);
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] flex flex-col font-['Inter']">
+    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] flex flex-col font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#131b2e] text-white px-4 py-3 rounded-xl shadow-2xl border border-white/10 flex items-center gap-2.5 animate-in slide-in-from-bottom-5 duration-200">
@@ -229,6 +228,7 @@ export default function App() {
 
       {/* Global Fixed Sidebar */}
       <Sidebar
+        patients={patients}
         currentScreen={currentScreen}
         onNavigate={handleNavigate}
         selectedCategory={selectedCategoryFilter}
@@ -240,7 +240,7 @@ export default function App() {
         branch={branch}
         onBranchChange={b => {
           setBranch(b);
-          showToast(`Switched active branch to ${b}`);
+          showToast(`เปลี่ยนสาขาเป็น ${b}`);
         }}
       />
 
@@ -265,6 +265,7 @@ export default function App() {
             onSelectPatient={p => setSelectedPatient(p)}
             onNavigate={handleNavigate}
             onOpenNewPatientModal={() => setIsNewPatientOpen(true)}
+            onOpenImportModal={() => setIsImportOpen(true)}
             onOpenBroadcastModal={(cohort, count) => setBroadcastConfig({ isOpen: true, cohort, count })}
             onOpenLineChat={p => setLineChatPatient(p)}
           />
@@ -283,6 +284,7 @@ export default function App() {
 
         {currentScreen === 'analytics' && (
           <AnalyticsScreen
+            patients={patients}
             onNavigate={handleNavigate}
             onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
             branch={branch}
@@ -291,13 +293,14 @@ export default function App() {
 
         {currentScreen === 'treatment-cycles' && (
           <TreatmentCyclesScreen
+            patients={patients}
             onNavigate={handleNavigate}
             onOpenBroadcast={(cohort, count) => setBroadcastConfig({ isOpen: true, cohort, count })}
           />
         )}
 
         {currentScreen === 'settings' && (
-          <SettingsScreen />
+          <SettingsScreen settings={rfmSettings} onSave={handleSaveSettings} />
         )}
       </main>
 
@@ -347,6 +350,10 @@ export default function App() {
           targetCohort={broadcastConfig.cohort}
           count={broadcastConfig.count}
         />
+      )}
+
+      {isImportOpen && (
+        <ImportModal onClose={() => setIsImportOpen(false)} onImport={handleImport} />
       )}
 
       {isWeeklyBriefOpen && (
