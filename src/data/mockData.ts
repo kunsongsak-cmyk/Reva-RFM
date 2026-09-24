@@ -1,6 +1,6 @@
-import { Patient, ConsultantPerformance } from '../types';
+import { PatientRecord, ConsultantPerformance } from '../types';
 
-export const INITIAL_PATIENTS: Patient[] = [
+export const INITIAL_PATIENTS: PatientRecord[] = [
   {
     id: 'p-1',
     hn: 'RV012982',
@@ -18,26 +18,7 @@ export const INITIAL_PATIENTS: Patient[] = [
     attendingDoctor: 'Dr. Kornvipa',
     doctorSpecialty: 'Dermatology & Laser',
     branch: 'Thonglor Flagship',
-    category: 'At Risk',
     tier: 'Platinum',
-    priorityScore: 96,
-    priorityLevel: 'Critical',
-    priorityReason: 'Lifting overdue 37d',
-    lifetimeValue: 186400,
-    trailing12M: 92500,
-    avgTicket: 26629,
-    completedVisits: 7,
-    lastVisitRecencyDays: 187,
-    lastVisitDate: '21 Mar 2026',
-    rfmScore: {
-      recencyScore: 2,
-      frequencyScore: 5,
-      monetaryScore: 4,
-      recencyLabel: '187 days since last treatment (decay threshold > 90d dropped score to 2).',
-      frequencyLabel: '7 visits in trailing 12M (benchmark >= 6 visits qualifies for top 5/5).',
-      monetaryLabel: '฿92.5K 12M expenditure (High spender bracket, > ฿100K elevates to 5/5).',
-      matrixVerdit: 'Previously hyper-frequent champion transitioning into critical lapse window due to treatment delay.'
-    },
     signals: [
       {
         title: '฿186K LTV Client',
@@ -63,46 +44,6 @@ export const INITIAL_PATIENTS: Patient[] = [
       subtitle: 'Includes 1x Complimentary Skin Booster',
       offerAttached: false
     },
-    cycles: [
-      {
-        protocolName: 'Lifting Protocol',
-        category: 'Lifting',
-        lastDate: '21 Mar 2026',
-        lastTreatment: 'Oligio X (600 Shots)',
-        targetDate: '15 Aug',
-        daysDiff: '+37d',
-        isOverdue: true,
-        overduePillText: '40 Days Overdue',
-        overduePillType: 'error',
-        progressPercent: 100
-      },
-      {
-        protocolName: 'Botox / Neurotoxin',
-        category: 'Injectables',
-        lastDate: '10 Jan 2026',
-        lastTreatment: 'Allergan 100u (Jaw/Brow)',
-        targetDate: '10 May',
-        daysDiff: '+136d',
-        isOverdue: true,
-        overduePillText: 'Overdue (136 days)',
-        overduePillType: 'error',
-        progressPercent: 100
-      },
-      {
-        protocolName: 'Skin Booster / PN',
-        category: 'Skin',
-        lastDate: 'No Recorded Records',
-        lastTreatment: 'Rejuran Healer / Juvelook',
-        targetDate: 'Open',
-        daysDiff: '0d',
-        isOverdue: false,
-        overduePillText: 'Cross-Sell Candidate',
-        overduePillType: 'neutral',
-        progressPercent: 0,
-        penetration: '0%',
-        potentialBadge: 'High Potential'
-      }
-    ],
     treatments: [
       {
         id: 't-1',
@@ -251,26 +192,7 @@ export const INITIAL_PATIENTS: Patient[] = [
     attendingDoctor: 'Dr. Kornvipa',
     doctorSpecialty: 'Dermatology & Laser',
     branch: 'Thonglor Flagship',
-    category: 'Loyal VIPs',
     tier: 'Prestige Gold',
-    priorityScore: 93,
-    priorityLevel: 'Critical',
-    priorityReason: 'Botox due 22d overdue',
-    lifetimeValue: 210000,
-    trailing12M: 98000,
-    avgTicket: 28000,
-    completedVisits: 8,
-    lastVisitRecencyDays: 112,
-    lastVisitDate: '03 Jun 2026',
-    rfmScore: {
-      recencyScore: 4,
-      frequencyScore: 5,
-      monetaryScore: 5,
-      recencyLabel: '112 days since last treatment, entering overdue neurotoxin cycle.',
-      frequencyLabel: '8 visits in trailing 12M.',
-      monetaryLabel: '฿98K 12M expenditure.',
-      matrixVerdit: 'High adherence loyal patient nearing muscular rebound threshold.'
-    },
     signals: [
       {
         title: 'Botox Overdue 22 Days',
@@ -290,20 +212,6 @@ export const INITIAL_PATIENTS: Patient[] = [
       subtitle: 'Price locked at corporate VIP rate ฿15,900',
       offerAttached: false
     },
-    cycles: [
-      {
-        protocolName: 'Botox / Neurotoxin',
-        category: 'Injectables',
-        lastDate: '03 Jun 2026',
-        lastTreatment: "Jawline + Crow's Feet 50u",
-        targetDate: '01 Sep',
-        daysDiff: '+22d',
-        isOverdue: true,
-        overduePillText: '22 Days Overdue',
-        overduePillType: 'error',
-        progressPercent: 95
-      }
-    ],
     treatments: [
       {
         id: 't-201',
@@ -315,6 +223,83 @@ export const INITIAL_PATIENTS: Patient[] = [
         statusBadge: 'Completed',
         statusType: 'secondary',
         details: 'Jawline and lateral canthal touch-up'
+      },
+      {
+        id: 't-202',
+        name: 'Program Oligio X (Full Face 600 Shots)',
+        category: 'Lifting',
+        date: '12 Mar 2026',
+        price: 49900,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Monopolar RF full face'
+      },
+      {
+        id: 't-203',
+        name: 'Rejuran Healer (2cc)',
+        category: 'Skin',
+        date: '20 Jan 2026',
+        price: 14900,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Polynucleotide full face'
+      },
+      {
+        id: 't-204',
+        name: 'Program Pico Discovery Laser (Full Face)',
+        category: 'Laser',
+        date: '15 Nov 2025',
+        price: 18000,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Brightening and melasma'
+      },
+      {
+        id: 't-205',
+        name: 'Botox Allergan 100u (Jawline + Forehead)',
+        category: 'Injectables',
+        date: '02 Aug 2025',
+        price: 15900,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Masseter 60u / upper face 40u'
+      },
+      {
+        id: 't-206',
+        name: 'Ulthera SPT (800 Lines)',
+        category: 'Lifting',
+        date: '10 Apr 2025',
+        price: 60000,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Full face and neck SMAS'
+      },
+      {
+        id: 't-207',
+        name: "Botox Allergan 50u (Crow's Feet)",
+        category: 'Injectables',
+        date: '18 Dec 2024',
+        price: 9900,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Lateral canthal lines'
+      },
+      {
+        id: 't-208',
+        name: 'Juvelook Collagen Stimulator (2 vials)',
+        category: 'Skin',
+        date: '05 Sep 2024',
+        price: 25000,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Cheek and temple'
       }
     ],
     timeline: [
@@ -345,26 +330,7 @@ export const INITIAL_PATIENTS: Patient[] = [
     attendingDoctor: 'Dr. Kornvipa',
     doctorSpecialty: 'Dermatology & Laser',
     branch: 'Thonglor Flagship',
-    category: 'New Patients',
     tier: 'Onboarding Cohort',
-    priorityScore: 87,
-    priorityLevel: 'High',
-    priorityReason: 'No 2nd visit scheduled • 38d since 1st Pico',
-    lifetimeValue: 29000,
-    trailing12M: 29000,
-    avgTicket: 29000,
-    completedVisits: 1,
-    lastVisitRecencyDays: 38,
-    lastVisitDate: '17 Aug 2026',
-    rfmScore: {
-      recencyScore: 5,
-      frequencyScore: 1,
-      monetaryScore: 2,
-      recencyLabel: '38 days since first visit.',
-      frequencyLabel: '1 visit completed (Onboarding phase).',
-      monetaryLabel: '฿29K initial package purchase.',
-      matrixVerdit: 'Crucial 2nd visit conversion stage to prevent drop-off.'
-    },
     signals: [
       {
         title: 'Acne Scar Subcision Follow-up',
@@ -378,20 +344,6 @@ export const INITIAL_PATIENTS: Patient[] = [
       subtitle: 'Course continuation voucher applicable',
       offerAttached: false
     },
-    cycles: [
-      {
-        protocolName: 'Pico Laser Protocol',
-        category: 'Lifting',
-        lastDate: '17 Aug 2026',
-        lastTreatment: 'Pico Discovery Session 1',
-        targetDate: '15 Sep',
-        daysDiff: '+8d',
-        isOverdue: true,
-        overduePillText: '8 Days Overdue',
-        overduePillType: 'neutral',
-        progressPercent: 70
-      }
-    ],
     treatments: [
       {
         id: 't-301',
@@ -433,26 +385,7 @@ export const INITIAL_PATIENTS: Patient[] = [
     attendingDoctor: 'Dr. Vorapat',
     doctorSpecialty: 'Plastic Surgery & Aesthetic Medicine',
     branch: 'Thonglor Flagship',
-    category: 'Champions',
     tier: 'Black Diamond Black Card',
-    priorityScore: 84,
-    priorityLevel: 'High',
-    priorityReason: 'Ulthera 1-Year Recall • VIP Anniversary',
-    lifetimeValue: 430000,
-    trailing12M: 195000,
-    avgTicket: 48000,
-    completedVisits: 14,
-    lastVisitRecencyDays: 14,
-    lastVisitDate: '10 Sep 2026',
-    rfmScore: {
-      recencyScore: 5,
-      frequencyScore: 5,
-      monetaryScore: 5,
-      recencyLabel: '14 days ago for facial maintenance.',
-      frequencyLabel: '14 total visits.',
-      monetaryLabel: '฿195K trailing 12M spend.',
-      matrixVerdit: 'Premier champion client with annual Ulthera recall due this month.'
-    },
     signals: [
       {
         title: 'Ulthera 1-Yr Anniversary Due',
@@ -472,20 +405,6 @@ export const INITIAL_PATIENTS: Patient[] = [
       subtitle: 'Black Diamond exclusive privilege (฿129,000)',
       offerAttached: false
     },
-    cycles: [
-      {
-        protocolName: 'Ultherapy Deep SMAS',
-        category: 'Lifting',
-        lastDate: '24 Sep 2025',
-        lastTreatment: 'Ulthera SPT 800 Lines',
-        targetDate: '24 Sep',
-        daysDiff: 'Due Now',
-        isOverdue: false,
-        overduePillText: 'Due This Week',
-        overduePillType: 'secondary',
-        progressPercent: 98
-      }
-    ],
     treatments: [
       {
         id: 't-401',
@@ -497,6 +416,149 @@ export const INITIAL_PATIENTS: Patient[] = [
         statusBadge: 'Completed',
         statusType: 'secondary',
         details: 'Pre-lifting skin preparation'
+      },
+      {
+        id: 't-402',
+        name: 'Botox Allergan 100u (Jawline + Forehead)',
+        category: 'Injectables',
+        date: '20 Aug 2026',
+        price: 15900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Masseter and upper face'
+      },
+      {
+        id: 't-403',
+        name: 'Rejuran Healer (2cc)',
+        category: 'Skin',
+        date: '12 Jun 2026',
+        price: 14900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Polynucleotide full face'
+      },
+      {
+        id: 't-404',
+        name: 'Botox Allergan 100u (Jawline + Forehead)',
+        category: 'Injectables',
+        date: '02 Apr 2026',
+        price: 15900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Masseter and upper face'
+      },
+      {
+        id: 't-405',
+        name: 'Juvelook Collagen Stimulator (2 vials)',
+        category: 'Skin',
+        date: '15 Feb 2026',
+        price: 25000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Cheek and temple'
+      },
+      {
+        id: 't-406',
+        name: 'Program Pico Discovery Laser (Full Face)',
+        category: 'Laser',
+        date: '10 Jan 2026',
+        price: 18000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Brightening'
+      },
+      {
+        id: 't-407',
+        name: 'Thermage FLX (600 REP)',
+        category: 'Lifting',
+        date: '01 Dec 2025',
+        price: 95000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Full face and eyes'
+      },
+      {
+        id: 't-408',
+        name: 'Ulthera SPT (800 Lines)',
+        category: 'Lifting',
+        date: '20 Sep 2025',
+        price: 60000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Full face and neck SMAS'
+      },
+      {
+        id: 't-409',
+        name: 'Botox Allergan 100u (Jawline + Forehead)',
+        category: 'Injectables',
+        date: '10 Jun 2025',
+        price: 15900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Masseter and upper face'
+      },
+      {
+        id: 't-410',
+        name: 'Rejuran Healer (2cc)',
+        category: 'Skin',
+        date: '15 Mar 2025',
+        price: 14900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Polynucleotide full face'
+      },
+      {
+        id: 't-411',
+        name: 'Program Pico Discovery Laser (Full Face)',
+        category: 'Laser',
+        date: '10 Dec 2024',
+        price: 18000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Brightening'
+      },
+      {
+        id: 't-412',
+        name: 'Botox Allergan 100u (Jawline + Forehead)',
+        category: 'Injectables',
+        date: '01 Sep 2024',
+        price: 15900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Masseter and upper face'
+      },
+      {
+        id: 't-413',
+        name: 'Thermage FLX (600 REP)',
+        category: 'Lifting',
+        date: '15 May 2024',
+        price: 95000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Full face'
+      },
+      {
+        id: 't-414',
+        name: 'Belotero Revive (1cc)',
+        category: 'Skin',
+        date: '01 Feb 2024',
+        price: 12900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Skin hydration'
       }
     ],
     timeline: [
@@ -527,26 +589,7 @@ export const INITIAL_PATIENTS: Patient[] = [
     attendingDoctor: 'Dr. Vorapat',
     doctorSpecialty: 'Aesthetic Medicine',
     branch: 'Thonglor Flagship',
-    category: 'At Risk',
     tier: 'Gold Tier',
-    priorityScore: 78,
-    priorityLevel: 'High',
-    priorityReason: 'Rejuran/PN Due (+45d)',
-    lifetimeValue: 152000,
-    trailing12M: 64000,
-    avgTicket: 21333,
-    completedVisits: 6,
-    lastVisitRecencyDays: 145,
-    lastVisitDate: '02 May 2026',
-    rfmScore: {
-      recencyScore: 2,
-      frequencyScore: 4,
-      monetaryScore: 4,
-      recencyLabel: '145 days since last session.',
-      frequencyLabel: '6 visits.',
-      monetaryLabel: '฿64K 12M spend.',
-      matrixVerdit: 'At-risk patient missing crucial skin booster cycle.'
-    },
     signals: [
       {
         title: 'Incomplete Skin Cycle',
@@ -560,21 +603,74 @@ export const INITIAL_PATIENTS: Patient[] = [
       subtitle: 'Special re-engagement package ฿12,900',
       offerAttached: false
     },
-    cycles: [
+    treatments: [
       {
-        protocolName: 'Polynucleotide (PN)',
+        id: 't-501',
+        name: 'Rejuran Healer (2cc) - Cycle 2',
         category: 'Skin',
-        lastDate: '02 May 2026',
-        lastTreatment: 'Rejuran Healer Cycle 2',
-        targetDate: '10 Aug',
-        daysDiff: '+45d',
-        isOverdue: true,
-        overduePillText: '45 Days Overdue',
-        overduePillType: 'error',
-        progressPercent: 100
+        date: '02 May 2026',
+        price: 14900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Polynucleotide full face'
+      },
+      {
+        id: 't-502',
+        name: 'Rejuran Healer (2cc) - Cycle 1',
+        category: 'Skin',
+        date: '28 Mar 2026',
+        price: 14900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Polynucleotide full face'
+      },
+      {
+        id: 't-503',
+        name: 'Botox Allergan 100u (Jawline + Forehead)',
+        category: 'Injectables',
+        date: '10 Jan 2026',
+        price: 15900,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Masseter and upper face'
+      },
+      {
+        id: 't-504',
+        name: 'Program Pico Discovery Laser (Full Face)',
+        category: 'Laser',
+        date: '15 Nov 2025',
+        price: 18000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Brightening'
+      },
+      {
+        id: 't-505',
+        name: 'Ulthera SPT (800 Lines)',
+        category: 'Lifting',
+        date: '20 Jun 2025',
+        price: 60000,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Full face and neck SMAS'
+      },
+      {
+        id: 't-506',
+        name: 'Juvelook Collagen Stimulator (2 vials)',
+        category: 'Skin',
+        date: '10 Feb 2025',
+        price: 28300,
+        doctor: 'Dr. Vorapat',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Cheek and temple'
       }
     ],
-    treatments: [],
     timeline: []
   },
   {
@@ -594,26 +690,7 @@ export const INITIAL_PATIENTS: Patient[] = [
     attendingDoctor: 'Dr. Kornvipa',
     doctorSpecialty: 'Dermatology & Laser',
     branch: 'Thonglor Flagship',
-    category: 'Need Attention',
     tier: 'Silver Tier',
-    priorityScore: 68,
-    priorityLevel: 'Medium',
-    priorityReason: 'Skin Booster cycle recommended',
-    lifetimeValue: 86000,
-    trailing12M: 45000,
-    avgTicket: 17200,
-    completedVisits: 5,
-    lastVisitRecencyDays: 75,
-    lastVisitDate: '11 Jul 2026',
-    rfmScore: {
-      recencyScore: 3,
-      frequencyScore: 4,
-      monetaryScore: 3,
-      recencyLabel: '75 days since last visit.',
-      frequencyLabel: '5 visits completed.',
-      monetaryLabel: '฿45K trailing spend.',
-      matrixVerdit: 'Steady patient candidate for cross-protocol skin hydration.'
-    },
     signals: [
       {
         title: 'Skin Booster Recommended',
@@ -627,21 +704,63 @@ export const INITIAL_PATIENTS: Patient[] = [
       subtitle: 'Introductory 1st syringe offer ฿16,000',
       offerAttached: false
     },
-    cycles: [
+    treatments: [
       {
-        protocolName: 'Hyaluronic Skin Booster',
+        id: 't-601',
+        name: 'Belotero Revive (1cc)',
         category: 'Skin',
-        lastDate: '11 Jul 2026',
-        lastTreatment: 'Belotero Revive (1cc)',
-        targetDate: '11 Oct',
-        daysDiff: 'In 18d',
-        isOverdue: false,
-        overduePillText: 'Due Soon',
-        overduePillType: 'neutral',
-        progressPercent: 70
+        date: '11 Jul 2026',
+        price: 12900,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Skin hydration'
+      },
+      {
+        id: 't-602',
+        name: "Botox Allergan 50u (Crow's Feet)",
+        category: 'Injectables',
+        date: '10 Apr 2026',
+        price: 9900,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Lateral canthal lines'
+      },
+      {
+        id: 't-603',
+        name: 'Program Pico Discovery Laser (Full Face)',
+        category: 'Laser',
+        date: '15 Jan 2026',
+        price: 18000,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Brightening'
+      },
+      {
+        id: 't-604',
+        name: 'Dual Yellow Laser',
+        category: 'Laser',
+        date: '20 Nov 2025',
+        price: 4200,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Redness and tone'
+      },
+      {
+        id: 't-605',
+        name: 'Ultraformer MPT (SMAS Tightening 400 Shots)',
+        category: 'Lifting',
+        date: '01 Jun 2025',
+        price: 41000,
+        doctor: 'Dr. Kornvipa',
+        statusBadge: 'เสร็จสิ้น',
+        statusType: 'neutral',
+        details: 'Full face'
       }
     ],
-    treatments: [],
     timeline: []
   }
 ];
@@ -695,67 +814,6 @@ export const CONSULTANT_LEADERBOARD: ConsultantPerformance[] = [
     completedCount: 24,
     revenueGenerated: 260000,
     rank: 4
-  }
-];
-
-export const RFM_COHORTS_SUMMARY = [
-  {
-    name: 'Champions',
-    count: 182,
-    percent: 12,
-    avgSpend: '฿185,000',
-    color: 'bg-secondary',
-    textColor: 'text-on-surface'
-  },
-  {
-    name: 'Loyal VIPs',
-    count: 328,
-    percent: 22,
-    avgSpend: '฿94,000',
-    color: 'bg-surface-tint',
-    textColor: 'text-on-surface'
-  },
-  {
-    name: 'Promising Habit',
-    count: 214,
-    percent: 14,
-    avgSpend: '฿52,000',
-    color: 'bg-secondary-fixed-dim',
-    textColor: 'text-on-surface'
-  },
-  {
-    name: 'New Patients',
-    count: 192,
-    percent: 13,
-    avgSpend: '฿31,000',
-    color: 'bg-primary-fixed-dim',
-    textColor: 'text-on-surface'
-  },
-  {
-    name: 'Need Attention',
-    count: 264,
-    percent: 18,
-    avgSpend: '฿44,000',
-    color: 'bg-on-tertiary-container',
-    textColor: 'text-on-surface'
-  },
-  {
-    name: 'At Risk (In Danger)',
-    count: 286,
-    percent: 19,
-    avgSpend: '฿88,000',
-    color: 'bg-error',
-    textColor: 'text-on-error-container',
-    highlightBadge: 'LTV รวม ฿25.1M',
-    isDanger: true
-  },
-  {
-    name: 'Lost / Inactive',
-    count: 621,
-    percent: 30,
-    avgSpend: 'อยู่ระหว่างแคมเปญดึงกลับ',
-    color: 'bg-outline-variant',
-    textColor: 'text-on-surface-variant'
   }
 ];
 

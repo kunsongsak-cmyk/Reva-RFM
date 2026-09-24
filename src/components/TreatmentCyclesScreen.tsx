@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { ScreenType } from '../types';
+import { Patient, ScreenType, TreatmentCategory } from '../types';
+import { CYCLE_INTERVAL_DAYS, formatBaht } from '../lib/rfm';
 
 interface TreatmentCyclesScreenProps {
+  patients: Patient[];
   onNavigate: (screen: ScreenType) => void;
   onOpenBroadcast: (cohort: string, count: number) => void;
 }
 
 export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
+  patients,
   onNavigate,
   onOpenBroadcast
 }) => {
@@ -15,53 +18,54 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
   const modalities = [
     {
       id: 'lifting',
+      category: 'Lifting' as TreatmentCategory,
       name: 'Monopolar RF & High-Intensity Ultrasound (Lifting)',
       protocols: ['Program Oligio X (600 Shots)', 'Ulthera SPT (800 Lines)', 'Ultraformer MPT (400 Shots)'],
       halfLifeMonths: '6 – 12 เดือน',
       decayDescription: 'การสร้างคอลลาเจนใหม่สูงสุดที่ 90 วัน และผิวเริ่มกลับมาหย่อนคล้อยทีละน้อยหลัง 180 วัน',
       optimalWindow: 'เดือนที่ 6 – 8',
-      activePatients: 412,
-      dueThisMonth: 38,
-      overdueCount: 19,
-      atRiskRevenue: '฿1,890,000'
     },
     {
       id: 'neurotoxin',
+      category: 'Injectables' as TreatmentCategory,
       name: 'Neurotoxin / Neuromodulator (Botox)',
       protocols: ['Botox Allergan 100u / 50u', 'Dysport Precision Aesthetic'],
       halfLifeMonths: '3 – 4 เดือน',
       decayDescription: 'ปลายประสาทแตกแขนงใหม่ (axonal sprouting) ทำให้การสั่งงานกล้ามเนื้อกลับมาเป็นปกติภายในประมาณ 120 วัน',
       optimalWindow: 'วันที่ 90 – 110',
-      activePatients: 624,
-      dueThisMonth: 84,
-      overdueCount: 42,
-      atRiskRevenue: '฿1,260,000'
     },
     {
       id: 'skin-booster',
+      category: 'Skin' as TreatmentCategory,
       name: 'Polynucleotide (PN) & Hyaluronic Acid Skin Boosters',
       protocols: ['Rejuran Healer (2cc)', 'Belotero Revive Hydration', 'Juvelook Collagen Stimulator'],
       halfLifeMonths: '1 – 3 เดือน',
       decayDescription: 'การกระตุ้น fibroblast และ ECM ต้องทำต่อเนื่องเป็นระยะเพื่อคงผลลัพธ์',
       optimalWindow: 'วันที่ 28 – 45 (ช่วงเริ่มต้น) / วันที่ 90 (ช่วงคงผล)',
-      activePatients: 380,
-      dueThisMonth: 61,
-      overdueCount: 28,
-      atRiskRevenue: '฿940,000'
     },
     {
       id: 'picosecond-laser',
+      category: 'Laser' as TreatmentCategory,
       name: 'Picosecond Laser & Photothermal Brightening',
       protocols: ['Program Pico Discovery (Melasma & Tone)', 'Dual Yellow Vascular Tone'],
       halfLifeMonths: '4 – 6 สัปดาห์',
       decayDescription: 'ผิวชั้นนอกผลัดเซลล์ทุก 28 วัน จึงต้องทำต่อเนื่องหลายครั้งเพื่อสลายเม็ดสีสะสม',
       optimalWindow: 'วันที่ 28 – 35',
-      activePatients: 290,
-      dueThisMonth: 45,
-      overdueCount: 14,
-      atRiskRevenue: '฿810,000'
     }
-  ];
+  ].map(m => {
+    const withCycle = patients
+      .map(p => ({ p, cycle: p.cycles.find(c => c.category === m.category && !c.isLapsed) }))
+      .filter(x => x.cycle);
+    const overdue = withCycle.filter(x => x.cycle!.isOverdue);
+    return {
+      ...m,
+      activePatients: withCycle.length,
+      dueThisMonth: withCycle.filter(x => !x.cycle!.isOverdue && x.cycle!.dueInDays <= 30).length,
+      overdueCount: overdue.length,
+      atRiskRevenue: formatBaht(overdue.reduce((sum, x) => sum + x.p.lifetimeValue, 0))
+    };
+  });
+  const urgentCount = patients.filter(p => p.priorityLevel === 'Critical' || p.priorityLevel === 'High').length;
 
   return (
     <div className="space-y-6">
@@ -81,7 +85,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
           className="px-4 py-2 bg-black hover:bg-slate-800 text-white text-[13px] font-semibold rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
         >
           <span className="material-symbols-outlined text-[18px]">view_timeline</span>
-          <span>ดูคิวติดตามวันนี้ (18)</span>
+          <span>ดูคิวติดตามวันนี้ ({urgentCount})</span>
         </button>
       </div>
 
@@ -98,7 +102,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
                   {m.name}
                 </h3>
                 <span className="text-[12px] font-semibold text-[#006a61]">
-                  ผลการรักษาคงอยู่: {m.halfLifeMonths}
+                  ผลการรักษาคงอยู่: {m.halfLifeMonths} • ระบบนัดทุก {CYCLE_INTERVAL_DAYS[m.category]} วัน
                 </span>
               </div>
               <span className="px-2.5 py-1 rounded bg-[#eff4ff] text-[#0b1c30] text-[11px] font-bold shrink-0">
@@ -116,7 +120,7 @@ export const TreatmentCyclesScreen: React.FC<TreatmentCyclesScreenProps> = ({
                 <strong className="text-[#0b1c30]">{m.optimalWindow}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#45464d]">ถึงรอบเดือนนี้:</span>
+                <span className="text-[#45464d]">ถึงรอบภายใน 30 วัน:</span>
                 <strong className="text-[#006a61]">{m.dueThisMonth} ราย</strong>
               </div>
               <div className="flex justify-between">

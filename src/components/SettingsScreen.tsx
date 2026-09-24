@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
+import { RfmSettings } from '../types';
+import { DEFAULT_RFM_SETTINGS } from '../lib/rfm';
 
-export const SettingsScreen: React.FC = () => {
-  const [lineConnected, setLineConnected] = useState(true);
+interface SettingsScreenProps {
+  settings: RfmSettings;
+  onSave: (settings: RfmSettings) => void;
+}
+
+export const SettingsScreen: React.FC<SettingsScreenProps> = ({ settings, onSave }) => {
   const [autoRecallHours, setAutoRecallHours] = useState('13:00 - 15:00');
-  const [rfmRecencyDays, setRfmRecencyDays] = useState(90);
-  const [rfmMonetaryThreshold, setRfmMonetaryThreshold] = useState(100000);
+  const [rfmRecencyDays, setRfmRecencyDays] = useState(settings.recencyDays);
+  const [rfmMonetaryThreshold, setRfmMonetaryThreshold] = useState(settings.monetaryThreshold);
   const [savedNotice, setSavedNotice] = useState(false);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    onSave({ recencyDays: rfmRecencyDays, monetaryThreshold: rfmMonetaryThreshold });
     setSavedNotice(true);
     setTimeout(() => setSavedNotice(false), 2500);
   };
@@ -117,7 +124,7 @@ export const SettingsScreen: React.FC = () => {
                   เกณฑ์ยอดใช้จ่ายสูง (฿{rfmMonetaryThreshold.toLocaleString()})
                 </label>
                 <span className="font-mono text-[#006a61] font-bold">
-                  ได้คะแนน Monetary 5/5
+                  ยอด 12 เดือนถึงเกณฑ์ = Monetary 5/5
                 </span>
               </div>
               <input
@@ -132,7 +139,23 @@ export const SettingsScreen: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-2 flex justify-end">
+          <div className="p-3 rounded-lg bg-[#eff4ff] text-[12px] text-[#45464d] leading-relaxed space-y-1">
+            <p><strong className="text-[#0b1c30]">Recency:</strong> มาไม่เกิน 1/3 ของเกณฑ์ = 5, ไม่เกิน 2/3 = 4, ไม่เกินเกณฑ์ = 3, ไม่เกิน 2 เท่า = 2, เกินกว่านั้น = 1</p>
+            <p><strong className="text-[#0b1c30]">Frequency:</strong> จำนวนครั้งที่มารับบริการทั้งหมด 10+ = 5, 6+ = 4, 4+ = 3, 2+ = 2, 1 = 1</p>
+            <p><strong className="text-[#0b1c30]">Monetary:</strong> ยอด 12 เดือน ≥ เกณฑ์ = 5, ≥ 60% = 4, ≥ 30% = 3, ≥ 10% = 2</p>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setRfmRecencyDays(DEFAULT_RFM_SETTINGS.recencyDays);
+                setRfmMonetaryThreshold(DEFAULT_RFM_SETTINGS.monetaryThreshold);
+              }}
+              className="px-4 py-2.5 text-[13px] rounded-lg text-[#45464d] hover:bg-slate-100"
+            >
+              คืนค่าเริ่มต้น
+            </button>
             <button
               type="submit"
               className="px-5 py-2.5 bg-black hover:bg-slate-800 text-white font-semibold text-[13px] rounded-lg flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"

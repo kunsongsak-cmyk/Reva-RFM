@@ -81,7 +81,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   <span className="material-symbols-outlined text-[18px] text-[#006a61]">view_timeline</span>
                   <span>คิวติดตามวันนี้</span>
                 </div>
-                <span className="text-[11px] text-[#76777d]">18 ราย</span>
+                <span className="text-[11px] text-[#76777d]">{patients.filter(p => p.priorityLevel === 'Critical' || p.priorityLevel === 'High').length} ราย</span>
               </button>
 
               <button
@@ -95,7 +95,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   <span className="material-symbols-outlined text-[18px] text-[#006a61]">person_search</span>
                   <span>ฐานข้อมูลคนไข้ & กลุ่ม RFM</span>
                 </div>
-                <span className="text-[11px] text-[#76777d]">1,482 ราย</span>
+                <span className="text-[11px] text-[#76777d]">{patients.length.toLocaleString()} ราย</span>
               </button>
 
               <button

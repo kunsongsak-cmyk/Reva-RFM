@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Patient, ScreenType } from '../types';
+import { isDueSoon, isOverdue, needsFollowUp } from '../lib/rfm';
 
 interface TodaysQueueScreenProps {
   patients: Patient[];
@@ -20,20 +21,30 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
   onOpenOutcome,
   onOpenBookModal
 }) => {
-  const [activeTab, setActiveTab] = useState<'All' | 'Treatment Due' | 'At Risk' | 'New Patient' | 'Overdue'>('All');
+  type QueueTab = 'All' | 'Treatment Due' | 'At Risk' | 'New Patient' | 'Overdue';
+  const [activeTab, setActiveTab] = useState<QueueTab>('All');
   const [procedureFilter, setProcedureFilter] = useState('All Procedures');
   const [doctorFilter, setDoctorFilter] = useState('All Doctors');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const tabMatchers: Record<QueueTab, (p: Patient) => boolean> = {
+    'All': () => true,
+    'Treatment Due': p => isOverdue(p) || isDueSoon(p),
+    'At Risk': p => p.category === 'At Risk',
+    'New Patient': p => p.category === 'New Patients',
+    'Overdue': isOverdue
+  };
+  const countTab = (t: QueueTab) => patients.filter(tabMatchers[t]).length;
+  const urgentCount = patients.filter(needsFollowUp).length;
+  const overdueCount = patients.filter(isOverdue).length;
+  const liftingOverdueCount = patients.filter(p => p.cycles.some(c => c.category === 'Lifting' && c.isOverdue)).length;
+
   // Filter patients based on tab and inputs
   const filteredPatients = patients.filter(p => {
-    if (activeTab === 'Treatment Due' && !p.priorityReason.toLowerCase().includes('due') && !p.priorityReason.toLowerCase().includes('recall')) return false;
-    if (activeTab === 'At Risk' && p.category !== 'At Risk') return false;
-    if (activeTab === 'New Patient' && p.category !== 'New Patients') return false;
-    if (activeTab === 'Overdue' && !p.priorityReason.toLowerCase().includes('overdue')) return false;
+    if (!tabMatchers[activeTab](p)) return false;
 
     if (procedureFilter !== 'All Procedures') {
-      const match = p.cycles.some(c => c.category === procedureFilter || c.protocolName.includes(procedureFilter));
+      const match = p.cycles.some(c => c.category === procedureFilter && !c.isLapsed);
       if (!match) return false;
     }
 
@@ -56,7 +67,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
             สวัสดีตอนเช้า คุณ May
           </h1>
           <p className="font-sans text-[14px] text-[#45464d] mt-0.5">
-            วันนี้มี <strong className="text-[#006a61]">คนไข้ที่ต้องติดตามด่วน 18 ราย</strong> ที่ถึงรอบนัดและควรติดต่อกลับ
+            วันนี้มี <strong className="text-[#006a61]">คนไข้ที่ต้องติดตามด่วน {urgentCount} ราย</strong> ที่ถึงรอบนัดและควรติดต่อกลับ
           </p>
         </div>
 
@@ -115,14 +126,14 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
               <span className="font-display text-[26px] font-bold text-[#ba1a1a] tracking-tight">
-                17
+                {overdueCount}
               </span>
               <span className="text-[11px] font-medium text-[#ba1a1a]">
-                ต้องรีบติดต่อ (+4)
+                ราย ต้องรีบติดต่อ
               </span>
             </div>
             <p className="text-[11px] text-[#45464d] mt-1.5 truncate">
-              ผลการยกกระชับเริ่มลดลงแล้ว 8 ราย
+              เลยรอบ Lifting {liftingOverdueCount} ราย
             </p>
           </div>
         </div>
@@ -181,23 +192,23 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
           {/* Tabs bar */}
           <div className="px-5 pt-4 pb-2 border-b border-[#c6c6cd]/30 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-              {[
-                { label: 'ทั้งหมด (18)', key: 'All' },
-                { label: 'ถึงรอบ Treatment (9)', key: 'Treatment Due' },
-                { label: 'At Risk (5)', key: 'At Risk' },
-                { label: 'คนไข้ใหม่ครั้งที่ 2 (3)', key: 'New Patient' },
-                { label: 'เลยกำหนด (1)', key: 'Overdue' }
-              ].map(t => (
+              {([
+                { label: 'ทั้งหมด', key: 'All' },
+                { label: 'ถึงรอบ Treatment', key: 'Treatment Due' },
+                { label: 'At Risk', key: 'At Risk' },
+                { label: 'คนไข้ใหม่', key: 'New Patient' },
+                { label: 'เลยกำหนด', key: 'Overdue' }
+              ] as { label: string; key: QueueTab }[]).map(t => (
                 <button
                   key={t.key}
-                  onClick={() => setActiveTab(t.key as any)}
+                  onClick={() => setActiveTab(t.key)}
                   className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold whitespace-nowrap transition-colors ${
                     activeTab === t.key
                       ? 'bg-black text-white shadow-xs'
                       : 'text-[#45464d] hover:bg-[#eff4ff] hover:text-[#0b1c30]'
                   }`}
                 >
-                  {t.label}
+                  {t.label} ({countTab(t.key)})
                 </button>
               ))}
             </div>
@@ -216,6 +227,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
                 <option value="Lifting">Lifting (Oligio X / Ulthera)</option>
                 <option value="Injectables">Injectables (Botox)</option>
                 <option value="Skin">Skin Booster (Rejuran / PN)</option>
+                <option value="Laser">Laser (Pico / Yellow)</option>
               </select>
 
               <select
@@ -390,7 +402,7 @@ export const TodaysQueueScreen: React.FC<TodaysQueueScreenProps> = ({
           </div>
 
           <div className="p-3 border-t border-[#c6c6cd]/30 bg-[#eff4ff]/40 flex items-center justify-between text-[11px] text-[#45464d]">
-            <span>แสดง {filteredPatients.length} จาก 18 รายในคิว</span>
+            <span>แสดง {filteredPatients.length} จาก {patients.length} ราย เรียงตามความเร่งด่วน</span>
             <span className="font-semibold text-[#006a61]">ซิงก์ข้อมูลครั้งถัดไป: 15:00</span>
           </div>
         </div>

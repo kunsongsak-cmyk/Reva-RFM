@@ -15,10 +15,12 @@ export type PatientCategory =
   | 'At Risk'
   | 'Lost / Inactive';
 
+export type TreatmentCategory = 'Lifting' | 'Injectables' | 'Laser' | 'Skin';
+
 export interface TreatmentHistoryItem {
   id: string;
   name: string;
-  category: 'Lifting' | 'Injectables' | 'Laser' | 'Skin';
+  category: TreatmentCategory;
   date: string;
   price: number;
   doctor: string;
@@ -45,7 +47,7 @@ export interface TimelineEvent {
 
 export interface TreatmentCycleStatus {
   protocolName: string;
-  category: 'Lifting' | 'Injectables' | 'Skin';
+  category: TreatmentCategory;
   lastDate: string;
   lastTreatment: string;
   targetDate: string;
@@ -54,8 +56,10 @@ export interface TreatmentCycleStatus {
   overduePillText: string;
   overduePillType: 'error' | 'secondary' | 'neutral';
   progressPercent: number;
-  penetration?: string;
-  potentialBadge?: string;
+  // Days until the next recommended treatment; negative when overdue
+  dueInDays: number;
+  // More than two intervals since the last treatment: no longer an active protocol
+  isLapsed: boolean;
 }
 
 export interface Patient {
@@ -132,3 +136,28 @@ export interface ConsultantPerformance {
   rank: number;
   isTop?: boolean;
 }
+
+export interface RfmSettings {
+  // Days since last visit at which a patient's recency score drops to 3
+  recencyDays: number;
+  // Trailing 12-month spend (THB) that earns a monetary score of 5
+  monetaryThreshold: number;
+}
+
+// Fields derived from treatment history by src/lib/rfm.ts
+export type ComputedPatientField =
+  | 'category'
+  | 'rfmScore'
+  | 'priorityScore'
+  | 'priorityLevel'
+  | 'priorityReason'
+  | 'lifetimeValue'
+  | 'trailing12M'
+  | 'avgTicket'
+  | 'completedVisits'
+  | 'lastVisitRecencyDays'
+  | 'lastVisitDate'
+  | 'cycles';
+
+// Patient data as stored; the computed fields are filled in at runtime
+export type PatientRecord = Omit<Patient, ComputedPatientField>;

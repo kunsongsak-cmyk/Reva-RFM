@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Patient, PatientCategory, ScreenType } from '../types';
 
 interface PatientsScreenProps {
@@ -27,15 +27,16 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
   const [doctorFilter, setDoctorFilter] = useState('All');
   const [minSpend, setMinSpend] = useState(0);
 
-  const segments: { label: PatientCategory; count: number; color?: string }[] = [
-    { label: 'All', count: 1482 },
-    { label: 'Champions', count: 182, color: 'text-[#006a61]' },
-    { label: 'Loyal VIPs', count: 328, color: 'text-[#565e74]' },
-    { label: 'New Patients', count: 192, color: 'text-[#0b1c30]' },
-    { label: 'Need Attention', count: 264, color: 'text-[#c76c00]' },
-    { label: 'At Risk', count: 286, color: 'text-[#ba1a1a]' },
-    { label: 'Lost / Inactive', count: 230, color: 'text-[#76777d]' }
-  ];
+  // Follow the sidebar when it switches segment while this screen is open
+  useEffect(() => {
+    setActiveSegment(selectedCategory || 'All');
+  }, [selectedCategory]);
+
+  const segmentLabels: PatientCategory[] = ['All', 'Champions', 'Loyal VIPs', 'New Patients', 'Need Attention', 'At Risk', 'Lost / Inactive'];
+  const segments = segmentLabels.map(label => ({
+    label,
+    count: label === 'All' ? patients.length : patients.filter(p => p.category === label).length
+  }));
 
   const filteredPatients = patients.filter(p => {
     if (activeSegment !== 'All' && p.category !== activeSegment) return false;
@@ -93,7 +94,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
             ฐานข้อมูลคนไข้ & กลุ่ม RFM
           </h1>
           <p className="font-sans text-[14px] text-[#45464d] mt-0.5">
-            คนไข้ที่ลงทะเบียน 1,482 ราย • แบ่งกลุ่มตาม RFM และยอดใช้จ่ายสะสม (LTV)
+            คนไข้ที่ลงทะเบียน {patients.length.toLocaleString()} ราย • แบ่งกลุ่มตาม RFM และยอดใช้จ่ายสะสม (LTV)
           </p>
         </div>
 
@@ -415,28 +416,7 @@ export const PatientsScreen: React.FC<PatientsScreenProps> = ({
 
         {/* Table footer pagination */}
         <div className="p-4 border-t border-[#c6c6cd]/30 bg-[#eff4ff]/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-[#45464d]">
-          <span>แสดง 1–{filteredPatients.length} จาก 1,482 ราย</span>
-          <div className="flex items-center gap-1">
-            <button className="px-2.5 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30] font-medium disabled:opacity-50">
-              ก่อนหน้า
-            </button>
-            <button className="px-3 py-1 rounded bg-[#131b2e] text-white font-semibold">
-              1
-            </button>
-            <button className="px-3 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30]">
-              2
-            </button>
-            <button className="px-3 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30]">
-              3
-            </button>
-            <span className="px-1 text-[#76777d]">...</span>
-            <button className="px-3 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30]">
-              149
-            </button>
-            <button className="px-2.5 py-1 rounded border border-[#c6c6cd]/40 bg-white hover:bg-slate-50 text-[#0b1c30] font-medium">
-              ถัดไป
-            </button>
-          </div>
+          <span>แสดง {filteredPatients.length} จาก {patients.length.toLocaleString()} ราย</span>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Patient, TreatmentHistoryItem, TimelineEvent } from '../types';
+import { Patient, TreatmentCategory, TreatmentHistoryItem, TimelineEvent } from '../types';
+import { formatThaiDate } from '../lib/rfm';
 
 interface PatientDossierScreenProps {
   patient: Patient;
@@ -18,7 +19,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
   onUpdatePatient,
   onBackToQueue
 }) => {
-  const [treatmentCategoryFilter, setTreatmentCategoryFilter] = useState<'All' | 'Lifting' | 'Injectables' | 'Laser'>('All');
+  const [treatmentCategoryFilter, setTreatmentCategoryFilter] = useState<'All' | TreatmentCategory>('All');
   const [expandChartNotes, setExpandChartNotes] = useState(true);
   const [offerAttached, setOfferAttached] = useState(patient.recommendedProposal.offerAttached || false);
 
@@ -380,7 +381,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                     <div className="text-right">
                       <span>ควรทำครั้งถัดไป: </span>
                       <strong className="text-[#0b1c30]">{cyc.targetDate}</strong>
-                      <span className="block font-semibold text-[#ba1a1a]">{cyc.daysDiff}</span>
+                      <span className={`block font-semibold ${cyc.isOverdue ? 'text-[#ba1a1a]' : 'text-[#45464d]'}`}>{cyc.daysDiff}</span>
                     </div>
                   </div>
 
@@ -388,7 +389,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                   <div className="w-full bg-[#eff4ff] h-1.5 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full ${
-                        cyc.isOverdue ? 'bg-[#ba1a1a]' : 'bg-[#006a61]'
+                        cyc.isOverdue ? 'bg-[#ba1a1a]' : cyc.isLapsed ? 'bg-[#c6c6cd]' : 'bg-[#006a61]'
                       }`}
                       style={{ width: `${Math.max(cyc.progressPercent, 10)}%` }}
                     ></div>
@@ -418,7 +419,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
 
             {/* Filter buttons */}
             <div className="flex items-center gap-1.5">
-              {(['All', 'Lifting', 'Injectables', 'Laser'] as const).map(cat => (
+              {(['All', 'Lifting', 'Injectables', 'Skin', 'Laser'] as const).map(cat => (
                 <button
                   key={cat}
                   onClick={() => setTreatmentCategoryFilter(cat)}
@@ -446,7 +447,7 @@ export const PatientDossierScreen: React.FC<PatientDossierScreenProps> = ({
                         {t.name}
                       </h4>
                       <div className="flex items-center gap-2 text-[11px] text-[#45464d] mt-0.5">
-                        <span className="font-medium">{t.date}</span>
+                        <span className="font-medium">{formatThaiDate(t.date)}</span>
                         <span>•</span>
                         <span>{t.doctor}</span>
                         <span>•</span>

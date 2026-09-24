@@ -1,20 +1,34 @@
 import React, { useState } from 'react';
-import { ScreenType, PatientCategory } from '../types';
-import { RFM_COHORTS_SUMMARY, RETENTION_FUNNEL_STAGES, CONSULTANT_LEADERBOARD } from '../data/mockData';
+import { ScreenType, PatientCategory, Patient } from '../types';
+import { RETENTION_FUNNEL_STAGES, CONSULTANT_LEADERBOARD } from '../data/mockData';
+import { formatBaht, summarizeSegments } from '../lib/rfm';
+
+const SEGMENT_DOT: Record<string, string> = {
+  'Champions': 'bg-secondary',
+  'Loyal VIPs': 'bg-surface-tint',
+  'New Patients': 'bg-secondary-fixed-dim',
+  'Need Attention': 'bg-on-tertiary-container',
+  'At Risk': 'bg-error',
+  'Lost / Inactive': 'bg-outline-variant'
+};
 
 interface AnalyticsScreenProps {
+  patients: Patient[];
   onNavigate: (screen: ScreenType, category?: PatientCategory) => void;
   onOpenWeeklyBrief: () => void;
   branch: string;
 }
 
 export const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({
+  patients,
   onNavigate,
   onOpenWeeklyBrief,
   branch
 }) => {
   const [selectedMonth, setSelectedMonth] = useState('September 2026');
   const [selectedBranch, setSelectedBranch] = useState(branch);
+  const segmentSummary = summarizeSegments(patients);
+  const atRisk = segmentSummary.find(s => s.segment === 'At Risk')!;
 
   const handleDownloadBoardReport = () => {
     const reportText = `=====================================================
@@ -27,7 +41,7 @@ EXECUTIVE SUMMARY
 - รายได้เดือนนี้ ฿2.84M (+14.2% จากเดือนก่อน) คิดเป็น 88.8% ของเป้า ฿3.20M
 - รายได้ 75.3% มาจากการติดตามคนไข้ผ่าน CRM (ROI 18.4x)
 - อัตรากลับมาใช้บริการภายใน 180 วัน 48.6% สูงกว่าเป้า 45.0%
-- กลุ่ม At Risk มี 286 ราย มูลค่า LTV รวม ฿25.1M ควรเร่งติดตามเป็นอันดับแรก
+- กลุ่ม At Risk มี ${atRisk.count} ราย มูลค่า LTV รวม ${formatBaht(atRisk.totalLifetimeValue)} ควรเร่งติดตามเป็นอันดับแรก
 
 1. ตัวชี้วัดหลัก
 - รายได้รวมเดือนนี้: ฿2,840,000 (+14.2% จากเดือนก่อน)
@@ -39,14 +53,8 @@ EXECUTIVE SUMMARY
 - คนไข้ที่ยัง Active: 1,482 ราย (ดึงกลับมาได้ 42 รายในเดือนนี้)
 - อัตราการหายไป (Churn): 4.2% (ลดลงจาก 6.8% ในไตรมาสก่อน)
 
-2. การกระจายตัวของกลุ่ม RFM
-- Champions: 182 ราย (12%) | ยอดเฉลี่ย ฿185,000
-- Loyal VIPs: 328 ราย (22%) | ยอดเฉลี่ย ฿94,000
-- Promising Habit: 214 ราย (14%) | ยอดเฉลี่ย ฿52,000
-- New Patients: 192 ราย (13%) | ยอดเฉลี่ย ฿31,000
-- Need Attention: 264 ราย (18%) | ยอดเฉลี่ย ฿44,000
-- At Risk: 286 ราย (19%) | ยอดเฉลี่ย ฿88,000 | LTV รวม ฿25.1M
-- Lost / Inactive: 621 ราย (30%) | อยู่ระหว่างแคมเปญดึงกลับ
+2. การกระจายตัวของกลุ่ม RFM (คำนวณจากคนไข้ ${patients.length} ราย)
+${segmentSummary.map(c => `- ${c.segment}: ${c.count} ราย (${c.percent}%) | LTV เฉลี่ย ${formatBaht(c.avgLifetimeValue)}`).join('\n')}
 
 3. อันดับผลงานที่ปรึกษา
 1. คุณ May: ฿720,000 | ติดต่อได้ 86% | จองนัด 31% | มารับบริการ 61 ราย
@@ -254,32 +262,25 @@ EXECUTIVE SUMMARY
           </div>
 
           <div className="space-y-2.5">
-            {RFM_COHORTS_SUMMARY.map((cohort, idx) => (
+            {segmentSummary.map(cohort => (
               <div
-                key={idx}
-                onClick={() => {
-                  if (cohort.name.includes('At Risk')) onNavigate('patients', 'At Risk');
-                  else if (cohort.name.includes('Champions')) onNavigate('patients', 'Champions');
-                  else if (cohort.name.includes('Loyal')) onNavigate('patients', 'Loyal VIPs');
-                  else if (cohort.name.includes('New')) onNavigate('patients', 'New Patients');
-                  else if (cohort.name.includes('Lost')) onNavigate('patients', 'Lost / Inactive');
-                  else onNavigate('patients');
-                }}
+                key={cohort.segment}
+                onClick={() => onNavigate('patients', cohort.segment)}
                 className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                  cohort.isDanger
+                  cohort.segment === 'At Risk'
                     ? 'bg-[#ffdad6]/20 border-[#ba1a1a]/30 hover:bg-[#ffdad6]/35'
                     : 'bg-[#eff4ff]/40 border-[#c6c6cd]/30 hover:bg-[#eff4ff]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    <span className={`w-2.5 h-2.5 rounded-full ${cohort.color}`}></span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${SEGMENT_DOT[cohort.segment]}`}></span>
                     <span className="font-display font-semibold text-[13px] text-[#0b1c30]">
-                      {cohort.name}
+                      {cohort.segment}
                     </span>
-                    {cohort.highlightBadge && (
+                    {cohort.segment === 'At Risk' && cohort.count > 0 && (
                       <span className="px-2 py-0.2 rounded text-[10px] font-bold bg-[#ba1a1a] text-white">
-                        {cohort.highlightBadge}
+                        LTV รวม {formatBaht(cohort.totalLifetimeValue)}
                       </span>
                     )}
                   </div>
@@ -294,7 +295,7 @@ EXECUTIVE SUMMARY
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] text-[#45464d] mt-1">
-                  <span>ยอดเฉลี่ย: <strong className="text-[#0b1c30]">{cohort.avgSpend}</strong></span>
+                  <span>LTV เฉลี่ย: <strong className="text-[#0b1c30]">{formatBaht(cohort.avgLifetimeValue)}</strong></span>
                   <span className="text-[#006a61] font-semibold hover:underline">ดูรายชื่อ →</span>
                 </div>
               </div>

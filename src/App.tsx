@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { ScreenType, Patient, PatientCategory } from './types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ScreenType, Patient, PatientCategory, PatientRecord, RfmSettings } from './types';
 import { INITIAL_PATIENTS } from './data/mockData';
+import { DEFAULT_RFM_SETTINGS, enrichPatient } from './lib/rfm';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { TodaysQueueScreen } from './components/TodaysQueueScreen';
@@ -19,10 +20,29 @@ import { CommandPalette } from './components/modals/CommandPalette';
 import { BroadcastModal } from './components/modals/BroadcastModal';
 import { WeeklyBriefModal } from './components/modals/WeeklyBriefModal';
 
+const SETTINGS_KEY = 'reva-rfm-settings';
+
+function loadSettings(): RfmSettings {
+  try {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    if (saved) return { ...DEFAULT_RFM_SETTINGS, ...JSON.parse(saved) };
+  } catch {
+    // Storage unavailable or corrupt: fall back to defaults
+  }
+  return DEFAULT_RFM_SETTINGS;
+}
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('todays-queue');
-  const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
-  const [selectedPatient, setSelectedPatient] = useState<Patient>(INITIAL_PATIENTS[0]);
+  const [records, setRecords] = useState<PatientRecord[]>(INITIAL_PATIENTS);
+  const [rfmSettings, setRfmSettings] = useState<RfmSettings>(loadSettings);
+  const patients = useMemo(
+    () => records.map(r => enrichPatient(r, rfmSettings)).sort((a, b) => b.priorityScore - a.priorityScore),
+    [records, rfmSettings]
+  );
+  const [selectedPatientId, setSelectedPatientId] = useState<string>(patients[0].id);
+  const selectedPatient = patients.find(p => p.id === selectedPatientId) ?? patients[0];
+  const setSelectedPatient = (p: Patient) => setSelectedPatientId(p.id);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<PatientCategory | undefined>(undefined);
   const [branch, setBranch] = useState('Thonglor Flagship');
 
@@ -67,15 +87,22 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleUpdatePatient = (updated: Patient) => {
-    setPatients(prev => prev.map(p => (p.id === updated.id ? updated : p)));
-    if (selectedPatient.id === updated.id) {
-      setSelectedPatient(updated);
-    }
+  const handleUpdatePatient = (updated: PatientRecord) => {
+    setRecords(prev => prev.map(p => (p.id === updated.id ? updated : p)));
   };
 
-  const handlePatientAdded = (newP: Partial<Patient>) => {
-    const fullPatient: Patient = {
+  const handleSaveSettings = (next: RfmSettings) => {
+    setRfmSettings(next);
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+    } catch {
+      // Settings still apply for this session
+    }
+    showToast('บันทึกเกณฑ์ RFM แล้ว คำนวณคะแนนใหม่ทั้งหมดเรียบร้อย');
+  };
+
+  const handlePatientAdded = (newP: Partial<PatientRecord>) => {
+    const fullPatient: PatientRecord = {
       id: `p-${Date.now()}`,
       hn: newP.hn || 'RV099999',
       name: newP.name || 'Khun Customer',
@@ -92,55 +119,15 @@ export default function App() {
       attendingDoctor: 'Dr. Kornvipa',
       doctorSpecialty: 'Dermatology & Laser',
       branch: 'Thonglor Flagship',
-      category: 'New Patients',
-      tier: 'Onboarding Cohort',
-      priorityScore: 75,
-      priorityLevel: 'High',
-      priorityReason: 'New Patient Intake Scheduled',
-      lifetimeValue: 0,
-      trailing12M: 0,
-      avgTicket: 0,
-      completedVisits: 0,
-      lastVisitRecencyDays: 0,
-      lastVisitDate: 'Today (Intake)',
-      rfmScore: {
-        recencyScore: 5,
-        frequencyScore: 1,
-        monetaryScore: 1,
-        recencyLabel: 'Brand new onboarding patient profile.',
-        frequencyLabel: '0 completed procedures.',
-        monetaryLabel: '฿0 initial spend.',
-        matrixVerdit: 'Newly registered VIP prospect requiring concierge welcome.'
-      },
-      signals: [
-        {
-          title: 'Initial Intake Protocol',
-          description: 'Ready for Visia complexion scan and consultation.',
-          icon: 'spa',
-          iconColor: 'text-[#006a61]'
-        }
-      ],
-      recommendedProposal: {
-        title: 'Initial Diagnostic Complexion Scan & Specialist Consultation',
-        subtitle: 'Complimentary welcome package privilege',
-        offerAttached: true
-      },
-      cycles: [],
+      tier: newP.tier || 'คนไข้ใหม่',
+      signals: newP.signals || [],
+      recommendedProposal: newP.recommendedProposal || { title: 'ปรึกษาแพทย์และวิเคราะห์ผิว', subtitle: '' },
       treatments: [],
-      timeline: [
-        {
-          id: `ev-${Date.now()}`,
-          title: 'Patient Intake Registered',
-          timestamp: 'Today, Just now',
-          icon: 'person_add',
-          iconBg: 'bg-[#006a61] text-white',
-          description: 'Profile created by Khun May via VIP reception desk.'
-        }
-      ]
+      timeline: newP.timeline || []
     };
 
-    setPatients(prev => [fullPatient, ...prev]);
-    setSelectedPatient(fullPatient);
+    setRecords(prev => [fullPatient, ...prev]);
+    setSelectedPatientId(fullPatient.id);
     setIsNewPatientOpen(false);
     showToast(`ลงทะเบียนคนไข้ใหม่ ${fullPatient.name} (HN: ${fullPatient.hn}) แล้ว`);
     handleNavigate('patient-detail');
@@ -229,6 +216,7 @@ export default function App() {
 
       {/* Global Fixed Sidebar */}
       <Sidebar
+        patients={patients}
         currentScreen={currentScreen}
         onNavigate={handleNavigate}
         selectedCategory={selectedCategoryFilter}
@@ -283,6 +271,7 @@ export default function App() {
 
         {currentScreen === 'analytics' && (
           <AnalyticsScreen
+            patients={patients}
             onNavigate={handleNavigate}
             onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
             branch={branch}
@@ -291,13 +280,14 @@ export default function App() {
 
         {currentScreen === 'treatment-cycles' && (
           <TreatmentCyclesScreen
+            patients={patients}
             onNavigate={handleNavigate}
             onOpenBroadcast={(cohort, count) => setBroadcastConfig({ isOpen: true, cohort, count })}
           />
         )}
 
         {currentScreen === 'settings' && (
-          <SettingsScreen />
+          <SettingsScreen settings={rfmSettings} onSave={handleSaveSettings} />
         )}
       </main>
 

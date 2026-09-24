@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Patient } from '../../types';
+import { PatientRecord } from '../../types';
 
 interface NewPatientModalProps {
   onClose: () => void;
-  onPatientAdded: (patient: Partial<Patient>) => void;
+  onPatientAdded: (patient: Partial<PatientRecord>) => void;
 }
 
 export const NewPatientModal: React.FC<NewPatientModalProps> = ({
@@ -38,26 +38,7 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
       attendingDoctor: 'Dr. Kornvipa',
       doctorSpecialty: 'Dermatology & Laser',
       branch: 'Thonglor Flagship',
-      category: 'New Patients',
       tier: 'คนไข้ใหม่',
-      priorityScore: 75,
-      priorityLevel: 'High',
-      priorityReason: 'คนไข้ใหม่ รอนัดปรึกษา',
-      lifetimeValue: 0,
-      trailing12M: 0,
-      avgTicket: 0,
-      completedVisits: 0,
-      lastVisitRecencyDays: 0,
-      lastVisitDate: 'วันนี้ (ลงทะเบียน)',
-      rfmScore: {
-        recencyScore: 5,
-        frequencyScore: 1,
-        monetaryScore: 1,
-        recencyLabel: 'คนไข้ลงทะเบียนใหม่',
-        frequencyLabel: 'ยังไม่เคยทำหัตถการ',
-        monetaryLabel: 'ยังไม่มียอดใช้จ่าย',
-        matrixVerdit: 'คนไข้ใหม่ ควรติดต่อต้อนรับและนัดปรึกษา'
-      },
       signals: [
         {
           title: 'คนไข้ใหม่',
@@ -71,7 +52,6 @@ export const NewPatientModal: React.FC<NewPatientModalProps> = ({
         subtitle: 'รวมสแกนผิวด้วย VISIA',
         offerAttached: true
       },
-      cycles: [],
       treatments: [],
       timeline: [
         {
